@@ -450,5 +450,11 @@
     "action": "GET /history/alice",
     "payload": {},
     "timestamp": "2026-07-11T15:40:42.943Z"
+  },
+  {
+    "userId": "anonymous",
+    "action": "GET /favicon.ico",
+    "payload": {},
+    "timestamp": "2026-07-11T15:51:36.980Z"
   }
 ]
