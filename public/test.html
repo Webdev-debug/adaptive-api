@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>API Test Page</title>
+  <style>
+    body { font-family: sans-serif; padding: 20px; }
+    button { display: block; margin: 10px 0; padding: 10px; width: 100%; }
+    pre { background: #eee; padding: 10px; white-space: pre-wrap; }
+  </style>
+</head>
+<body>
+  <h2>Adaptive API Tester</h2>
+
+  <button onclick="sendOrder()">Send Valid Order</button>
+  <button onclick="sendOrderWithCoupon()">Send Order With New Field</button>
+  <button onclick="sendBadOrder()">Send Order Missing Field</button>
+  <button onclick="getHistory()">Get Alice's History</button>
+
+  <pre id="output">Result will show here...</pre>
+
+  <script>
+    const output = document.getElementById('output');
+
+    async function post(url, data) {
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+      const json = await res.json();
+      output.textContent = JSON.stringify(json, null, 2);
+    }
+
+    async function get(url) {
+      const res = await fetch(url);
+      const json = await res.json();
+      output.textContent = JSON.stringify(json, null, 2);
+    }
+
+    function sendOrder() {
+      post('/orders', { userId: 'alice', orderId: '300', amount: 120 });
+    }
+
+    function sendOrderWithCoupon() {
+      post('/orders', { userId: 'alice', orderId: '301', amount: 60, coupon: 'WELCOME5' });
+    }
+
+    function sendBadOrder() {
+      post('/orders', { userId: 'alice', orderId: '302' });
+    }
+
+    function getHistory() {
+      get('/history/alice');
+    }
+  </script>
+</body>
+</html>

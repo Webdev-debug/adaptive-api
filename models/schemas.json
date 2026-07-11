@@ -1,0 +1,23 @@
+{
+  "createOrder": {
+    "version": 3,
+    "fields": {
+      "orderId": {
+        "type": "string",
+        "required": true
+      },
+      "amount": {
+        "type": "number",
+        "required": true
+      },
+      "coupon": {
+        "type": "string",
+        "required": false
+      },
+      "userId": {
+        "type": "string",
+        "required": false
+      }
+    }
+  }
+}
