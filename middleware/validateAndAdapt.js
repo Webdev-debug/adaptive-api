@@ -1,13 +1,20 @@
-const { getSchema, updateSchema } = require('../services/schemaService');
+const { getSchema, updateSchema, createSchema } = require('../services/schemaService');
 
 function validateAndAdapt(resource) {
   return (req, res, next) => {
-    const schema = getSchema(resource);
+    let schema = getSchema(resource);
+    const body = req.body || {};
+
     if (!schema) {
-      return res.status(500).json({ error: `No schema found for ${resource}` });
+      const initialFields = {};
+      for (const field in body) {
+        initialFields[field] = { type: typeof body[field], required: false };
+      }
+      createSchema(resource, initialFields);
+      schema = getSchema(resource);
+      return next();
     }
 
-    const body = req.body;
     const errors = [];
     const newFields = {};
 
@@ -36,7 +43,6 @@ function validateAndAdapt(resource) {
 
     if (Object.keys(newFields).length > 0) {
       updateSchema(resource, newFields);
-      console.log(`Schema for ${resource} updated with new fields:`, newFields);
     }
 
     next();

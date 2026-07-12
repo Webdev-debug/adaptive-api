@@ -11,6 +11,12 @@ function saveAllSchemas(schemas) {
   fs.writeFileSync(SCHEMA_PATH, JSON.stringify(schemas, null, 2));
 }
 
+function createSchema(resource, fields) {
+  const schemas = loadAllSchemas();
+  schemas[resource] = { version: 1, fields };
+  saveAllSchemas(schemas);
+}
+
 function getSchema(resource) {
   const schemas = loadAllSchemas();
   return schemas[resource] || null;
@@ -25,4 +31,4 @@ function updateSchema(resource, newFields) {
   saveAllSchemas(schemas);
 }
 
-module.exports = { getSchema, updateSchema };
+module.exports = { getSchema, createSchema, updateSchema };

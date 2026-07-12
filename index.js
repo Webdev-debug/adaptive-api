@@ -9,6 +9,12 @@ app.use(express.json());
 app.use(trackUser);
 app.use(express.static('public'));
 
+app.post('/webhook/:source', (req, res, next) => {
+  validateAndAdapt(req.params.source)(req, res, next);
+}, (req, res) => {
+  res.json({ message: 'Event received', source: req.params.source, data: req.body });
+});
+
 app.post('/orders', validateAndAdapt('createOrder'), (req, res) => {
   res.json({ message: 'Order received', data: req.body });
 });

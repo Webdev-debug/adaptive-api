@@ -1,6 +1,6 @@
 {
   "createOrder": {
-    "version": 3,
+    "version": 1,
     "fields": {
       "orderId": {
         "type": "string",
@@ -9,12 +9,50 @@
       "amount": {
         "type": "number",
         "required": true
+      }
+    }
+  },
+  "stripe": {
+    "version": 2,
+    "fields": {
+      "eventType": {
+        "type": "string",
+        "required": false
       },
-      "coupon": {
+      "amount": {
+        "type": "number",
+        "required": false
+      },
+      "currency": {
         "type": "string",
         "required": false
       },
       "userId": {
+        "type": "string",
+        "required": false
+      }
+    }
+  },
+  "shopify": {
+    "version": 3,
+    "fields": {
+      "orderNumber": {
+        "type": "string",
+        "required": false
+      },
+      "total": {
+        "type": "number",
+        "required": false
+      },
+      "customerEmail": {
+        "type": "string",
+        "required": false
+      },
+      "userId": {
+        "type": "string",
+        "required": false
+      },
+      "note": {
         "type": "string",
         "required": false
       }
