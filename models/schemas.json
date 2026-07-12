@@ -13,7 +13,7 @@
     }
   },
   "stripe": {
-    "version": 2,
+    "version": 3,
     "fields": {
       "eventType": {
         "type": "string",
@@ -28,6 +28,10 @@
         "required": false
       },
       "userId": {
+        "type": "string",
+        "required": false
+      },
+      "note": {
         "type": "string",
         "required": false
       }

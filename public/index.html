@@ -19,6 +19,11 @@
   --danger:#FF6B6B;
 }
 *{box-sizing:border-box;}
+
+@keyframes gridDrift{
+  from{background-position:0 0, 0 0, 0 0;}
+  to{background-position:36px 36px, 36px 36px, 0 0;}
+}
 body{
   margin:0;
   background-color:#000000;
@@ -30,7 +35,9 @@ body{
   color:var(--ink);
   font-family:'Inter',sans-serif;
   line-height:1.5;
+  animation:gridDrift 6s linear infinite;
 }
+
 .wrap{max-width:880px;margin:0 auto;padding:0 20px;}
 nav{display:flex;justify-content:space-between;align-items:center;padding:22px 0;border-bottom:1px solid var(--line);}
 .logo{font-family:'JetBrains Mono',monospace;font-weight:500;font-size:15px;letter-spacing:0.5px;}
@@ -41,7 +48,8 @@ nav a{color:var(--dim);text-decoration:none;font-size:14px;margin-left:18px;}
 h1{font-family:'Big Shoulders Display',sans-serif;font-weight:900;font-size:clamp(38px,7vw,64px);line-height:0.98;margin:0 0 18px;text-transform:uppercase;}
 h1 em{color:var(--accent);font-style:normal;font-family:inherit;}
 .sub{color:var(--dim);font-size:17px;max-width:520px;margin:0 0 28px;}
-.cta{display:inline-block;background:var(--accent);color:#001018;font-family:'JetBrains Mono',monospace;font-weight:500;padding:12px 20px;text-decoration:none;font-size:14px;}
+.cta{display:inline-block;background:var(--accent);color:#001018;font-family:'JetBrains Mono',monospace;font-weight:500;padding:12px 20px;text-decoration:none;font-size:14px;transition:transform 0.1s ease;}
+.cta:active{transform:scale(0.96);}
 .spec-grid{display:grid;grid-template-columns:1fr;gap:16px;padding:20px 0 40px;}
 @media(min-width:640px){.spec-grid{grid-template-columns:repeat(3,1fr);}}
 .spec-card{border:1px solid var(--line);padding:18px;background:var(--panel);}
@@ -53,18 +61,34 @@ h1 em{color:var(--accent);font-style:normal;font-family:inherit;}
 .demo-grid{display:grid;grid-template-columns:1fr;gap:20px;}
 @media(min-width:720px){.demo-grid{grid-template-columns:1fr 1fr;}}
 .blueprint{border:1px dashed var(--line);padding:16px;position:relative;}
-.blueprint .version{position:absolute;top:-12px;right:12px;background:#000000;color:var(--accent);font-family:'JetBrains Mono',monospace;font-size:12px;padding:0 6px;}
-.field-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid rgba(79,195,247,0.15);font-family:'JetBrains Mono',monospace;font-size:13px;}
+.blueprint .version{position:absolute;top:-12px;right:12px;background:#000000;color:var(--accent);font-family:'JetBrains Mono',monospace;font-size:12px;padding:0 6px;display:inline-block;}
+
+@keyframes versionPulse{
+  0%{transform:scale(1);color:var(--accent);}
+  40%{transform:scale(1.4);color:#ffffff;}
+  100%{transform:scale(1);color:var(--accent);}
+}
+.version.pulse{animation:versionPulse 0.6s ease;}
+
+@keyframes drawIn{
+  from{opacity:0;transform:translateX(-6px);}
+  to{opacity:1;transform:translateX(0);}
+}
+.field-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid rgba(79,195,247,0.15);font-family:'JetBrains Mono',monospace;font-size:13px;animation:drawIn 0.35s ease both;}
 .field-row:last-child{border-bottom:none;}
 .pill{font-size:11px;padding:2px 7px;border:1px solid var(--line);color:var(--dim);margin-left:6px;}
 .pill.req{color:var(--danger);border-color:var(--danger);}
 .source-tabs{display:flex;gap:8px;margin-bottom:14px;}
-.source-tabs button{flex:1;background:transparent;border:1px solid var(--line);color:var(--dim);font-family:'JetBrains Mono',monospace;font-size:12px;padding:8px;cursor:pointer;}
+.source-tabs button{flex:1;background:transparent;border:1px solid var(--line);color:var(--dim);font-family:'JetBrains Mono',monospace;font-size:12px;padding:8px;cursor:pointer;transition:transform 0.1s ease;}
 .source-tabs button.active{border-color:var(--accent);color:var(--accent);}
+.source-tabs button:active{transform:scale(0.96);}
 .actions{display:flex;flex-direction:column;gap:10px;}
-button.action{background:transparent;border:1px solid var(--line);color:var(--ink);font-family:'JetBrains Mono',monospace;font-size:13px;padding:12px;cursor:pointer;text-align:left;}
+button.action{background:transparent;border:1px solid var(--line);color:var(--ink);font-family:'JetBrains Mono',monospace;font-size:13px;padding:12px;cursor:pointer;text-align:left;transition:transform 0.1s ease;}
 button.action:hover{border-color:var(--accent);color:var(--accent);}
+button.action:active{transform:scale(0.97);}
+button.action:disabled{opacity:0.5;}
 .output{background:var(--panel);border:1px solid var(--line);padding:12px;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent2);white-space:pre-wrap;max-height:220px;overflow-y:auto;margin-top:10px;}
+.output.err{color:var(--danger);}
 table{width:100%;border-collapse:collapse;font-size:13px;}
 th,td{text-align:left;padding:10px 8px;border-bottom:1px solid var(--line);font-family:'JetBrains Mono',monospace;}
 th{color:var(--dim);font-weight:500;font-size:12px;text-transform:uppercase;}
@@ -110,9 +134,9 @@ footer a{color:var(--accent);}
       <div class="output" id="output">Response will show here.</div>
     </div>
     <div class="actions">
-      <button class="action" onclick="sendEvent()">→ Send event to current source</button>
-      <button class="action" onclick="sendEventNewField()">→ Send event with unseen field</button>
-      <button class="action" onclick="getHistory()">→ Get alice's history</button>
+      <button class="action" id="btn-send" onclick="sendEvent()">→ Send event to current source</button>
+      <button class="action" id="btn-newfield" onclick="sendEventNewField()">→ Send event with unseen field</button>
+      <button class="action" id="btn-history" onclick="getHistory()">→ Get alice's history</button>
     </div>
   </div>
 </div>
@@ -133,14 +157,20 @@ footer a{color:var(--accent);}
 
 <script>
 let currentSource = 'stripe';
+const knownVersions = {};
 const output = document.getElementById('output');
 const fieldsBox = document.getElementById('blueprint-fields');
 const versionTag = document.getElementById('version-tag');
+const allButtons = ['btn-send','btn-newfield','btn-history'].map(id => document.getElementById(id));
 
 const sampleData = {
   stripe: { eventType:'payment.success', amount:500, currency:'USD' },
   shopify: { orderNumber:'SHOP-1029', total:89.99, customerEmail:'test@example.com' }
 };
+
+function setBusy(busy){
+  allButtons.forEach(b => b.disabled = busy);
+}
 
 function setSource(src){
   currentSource = src;
@@ -150,35 +180,68 @@ function setSource(src){
 }
 
 async function loadSchema(){
-  const res = await fetch('/schema/' + currentSource);
-  if(res.status === 404){
-    fieldsBox.innerHTML = '<span style="color:var(--dim)">No events yet — send one to create this schema.</span>';
-    versionTag.textContent = 'v0';
-    return;
-  }
-  const data = await res.json();
-  versionTag.textContent = 'v' + data.version;
-  fieldsBox.innerHTML = '';
-  for(const name in data.fields){
-    const f = data.fields[name];
-    const row = document.createElement('div');
-    row.className = 'field-row';
-    row.innerHTML = '<span>' + name + ' <span style="color:var(--dim)">(' + f.type + ')</span></span><span><span class="pill ' + (f.required ? 'req' : '') + '">' + (f.required ? 'required' : 'optional') + '</span></span>';
-    fieldsBox.appendChild(row);
+  try {
+    const res = await fetch('/schema/' + currentSource);
+    if(res.status === 404){
+      fieldsBox.innerHTML = '<span style="color:var(--dim)">No events yet — send one to create this schema.</span>';
+      versionTag.textContent = 'v0';
+      return;
+    }
+    const data = await res.json();
+
+    const prev = knownVersions[currentSource];
+    if(prev !== undefined && prev !== data.version){
+      versionTag.classList.remove('pulse');
+      void versionTag.offsetWidth;
+      versionTag.classList.add('pulse');
+    }
+    knownVersions[currentSource] = data.version;
+
+    versionTag.textContent = 'v' + data.version;
+    fieldsBox.innerHTML = '';
+    for(const name in data.fields){
+      const f = data.fields[name];
+      const row = document.createElement('div');
+      row.className = 'field-row';
+      row.innerHTML = '<span>' + name + ' <span style="color:var(--dim)">(' + f.type + ')</span></span><span><span class="pill ' + (f.required ? 'req' : '') + '">' + (f.required ? 'required' : 'optional') + '</span></span>';
+      fieldsBox.appendChild(row);
+    }
+  } catch(e){
+    fieldsBox.innerHTML = '<span style="color:var(--danger)">Could not load schema: ' + e.message + '</span>';
   }
 }
 
 async function post(url, data){
-  const res = await fetch(url, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(data) });
-  const json = await res.json();
-  output.textContent = JSON.stringify(json, null, 2);
-  loadSchema();
+  setBusy(true);
+  output.classList.remove('err');
+  output.textContent = 'Sending...';
+  try {
+    const res = await fetch(url, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(data) });
+    const json = await res.json();
+    output.textContent = JSON.stringify(json, null, 2);
+    await loadSchema();
+  } catch(e){
+    output.classList.add('err');
+    output.textContent = 'Request failed: ' + e.message;
+  } finally {
+    setBusy(false);
+  }
 }
 
 async function get(url){
-  const res = await fetch(url);
-  const json = await res.json();
-  output.textContent = JSON.stringify(json, null, 2);
+  setBusy(true);
+  output.classList.remove('err');
+  output.textContent = 'Loading...';
+  try {
+    const res = await fetch(url);
+    const json = await res.json();
+    output.textContent = JSON.stringify(json, null, 2);
+  } catch(e){
+    output.classList.add('err');
+    output.textContent = 'Request failed: ' + e.message;
+  } finally {
+    setBusy(false);
+  }
 }
 
 function sendEvent(){

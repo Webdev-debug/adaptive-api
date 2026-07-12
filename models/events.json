@@ -764,5 +764,446 @@
     "action": "GET /history/alice",
     "payload": {},
     "timestamp": "2026-07-12T21:48:25.708Z"
+  },
+  {
+    "userId": "anonymous",
+    "action": "GET /favicon.ico",
+    "payload": {},
+    "timestamp": "2026-07-12T21:50:11.336Z"
+  },
+  {
+    "userId": "anonymous",
+    "action": "GET /",
+    "payload": {},
+    "timestamp": "2026-07-12T21:54:39.279Z"
+  },
+  {
+    "userId": "anonymous",
+    "action": "GET /",
+    "payload": {},
+    "timestamp": "2026-07-12T21:57:35.459Z"
+  },
+  {
+    "userId": "anonymous",
+    "action": "GET /",
+    "payload": {},
+    "timestamp": "2026-07-12T21:59:13.848Z"
+  },
+  {
+    "userId": "anonymous",
+    "action": "GET /schema/stripe",
+    "payload": {},
+    "timestamp": "2026-07-12T21:59:27.686Z"
+  },
+  {
+    "userId": "anonymous",
+    "action": "GET /favicon.ico",
+    "payload": {},
+    "timestamp": "2026-07-12T21:59:28.054Z"
+  },
+  {
+    "userId": "alice",
+    "action": "POST /webhook/stripe",
+    "payload": {
+      "userId": "alice",
+      "eventType": "payment.success",
+      "amount": 500,
+      "currency": "USD"
+    },
+    "timestamp": "2026-07-12T21:59:41.803Z"
+  },
+  {
+    "userId": "anonymous",
+    "action": "GET /schema/stripe",
+    "payload": {},
+    "timestamp": "2026-07-12T21:59:41.827Z"
+  },
+  {
+    "userId": "alice",
+    "action": "POST /webhook/stripe",
+    "payload": {
+      "userId": "alice",
+      "eventType": "payment.success",
+      "amount": 500,
+      "currency": "USD",
+      "note": "auto-added-field"
+    },
+    "timestamp": "2026-07-12T21:59:43.665Z"
+  },
+  {
+    "userId": "anonymous",
+    "action": "GET /schema/stripe",
+    "payload": {},
+    "timestamp": "2026-07-12T21:59:43.684Z"
+  },
+  {
+    "userId": "anonymous",
+    "action": "GET /history/alice",
+    "payload": {},
+    "timestamp": "2026-07-12T21:59:44.780Z"
+  },
+  {
+    "userId": "anonymous",
+    "action": "GET /schema/shopify",
+    "payload": {},
+    "timestamp": "2026-07-12T21:59:47.478Z"
+  },
+  {
+    "userId": "alice",
+    "action": "POST /webhook/shopify",
+    "payload": {
+      "userId": "alice",
+      "orderNumber": "SHOP-1029",
+      "total": 89.99,
+      "customerEmail": "test@example.com"
+    },
+    "timestamp": "2026-07-12T22:03:47.341Z"
+  },
+  {
+    "userId": "anonymous",
+    "action": "GET /test.html",
+    "payload": {},
+    "timestamp": "2026-07-12T22:03:47.707Z"
+  },
+  {
+    "userId": "anonymous",
+    "action": "GET /test.html",
+    "payload": {},
+    "timestamp": "2026-07-12T22:03:47.721Z"
+  },
+  {
+    "userId": "anonymous",
+    "action": "GET /favicon.ico",
+    "payload": {},
+    "timestamp": "2026-07-12T22:04:24.325Z"
+  },
+  {
+    "userId": "anonymous",
+    "action": "GET /",
+    "payload": {},
+    "timestamp": "2026-07-12T22:04:28.467Z"
+  },
+  {
+    "userId": "anonymous",
+    "action": "GET /schema/stripe",
+    "payload": {},
+    "timestamp": "2026-07-12T22:04:28.789Z"
+  },
+  {
+    "userId": "alice",
+    "action": "POST /webhook/stripe",
+    "payload": {
+      "userId": "alice",
+      "eventType": "payment.success",
+      "amount": 500,
+      "currency": "USD"
+    },
+    "timestamp": "2026-07-12T22:04:37.983Z"
+  },
+  {
+    "userId": "anonymous",
+    "action": "GET /schema/stripe",
+    "payload": {},
+    "timestamp": "2026-07-12T22:04:38.019Z"
+  },
+  {
+    "userId": "alice",
+    "action": "POST /webhook/stripe",
+    "payload": {
+      "userId": "alice",
+      "eventType": "payment.success",
+      "amount": 500,
+      "currency": "USD",
+      "note": "auto-added-field"
+    },
+    "timestamp": "2026-07-12T22:04:40.068Z"
+  },
+  {
+    "userId": "anonymous",
+    "action": "GET /schema/stripe",
+    "payload": {},
+    "timestamp": "2026-07-12T22:04:40.093Z"
+  },
+  {
+    "userId": "anonymous",
+    "action": "GET /",
+    "payload": {},
+    "timestamp": "2026-07-12T22:07:48.364Z"
+  },
+  {
+    "userId": "anonymous",
+    "action": "GET /favicon.ico",
+    "payload": {},
+    "timestamp": "2026-07-12T22:07:49.284Z"
+  },
+  {
+    "userId": "anonymous",
+    "action": "GET /schema/shopify",
+    "payload": {},
+    "timestamp": "2026-07-12T22:07:55.005Z"
+  },
+  {
+    "userId": "alice",
+    "action": "POST /webhook/shopify",
+    "payload": {
+      "userId": "alice",
+      "orderNumber": "SHOP-1029",
+      "total": 89.99,
+      "customerEmail": "test@example.com"
+    },
+    "timestamp": "2026-07-12T22:07:57.392Z"
+  },
+  {
+    "userId": "anonymous",
+    "action": "GET /schema/shopify",
+    "payload": {},
+    "timestamp": "2026-07-12T22:07:57.472Z"
+  },
+  {
+    "userId": "alice",
+    "action": "POST /webhook/shopify",
+    "payload": {
+      "userId": "alice",
+      "orderNumber": "SHOP-1029",
+      "total": 89.99,
+      "customerEmail": "test@example.com",
+      "note": "auto-added-field"
+    },
+    "timestamp": "2026-07-12T22:08:00.286Z"
+  },
+  {
+    "userId": "anonymous",
+    "action": "GET /schema/shopify",
+    "payload": {},
+    "timestamp": "2026-07-12T22:08:00.315Z"
+  },
+  {
+    "userId": "anonymous",
+    "action": "GET /history/alice",
+    "payload": {},
+    "timestamp": "2026-07-12T22:08:01.599Z"
+  },
+  {
+    "userId": "anonymous",
+    "action": "GET /schema/stripe",
+    "payload": {},
+    "timestamp": "2026-07-12T22:08:04.348Z"
+  },
+  {
+    "userId": "alice",
+    "action": "POST /webhook/stripe",
+    "payload": {
+      "userId": "alice",
+      "eventType": "payment.success",
+      "amount": 500,
+      "currency": "USD"
+    },
+    "timestamp": "2026-07-12T22:10:09.151Z"
+  },
+  {
+    "userId": "anonymous",
+    "action": "GET /favicon.ico",
+    "payload": {},
+    "timestamp": "2026-07-12T22:11:52.158Z"
+  },
+  {
+    "userId": "alice",
+    "action": "POST /webhook/stripe",
+    "payload": {
+      "userId": "alice",
+      "eventType": "payment.success",
+      "amount": 500,
+      "currency": "USD"
+    },
+    "timestamp": "2026-07-12T22:12:05.504Z"
+  },
+  {
+    "userId": "anonymous",
+    "action": "GET /schema/stripe",
+    "payload": {},
+    "timestamp": "2026-07-12T22:12:05.642Z"
+  },
+  {
+    "userId": "alice",
+    "action": "POST /webhook/stripe",
+    "payload": {
+      "userId": "alice",
+      "eventType": "payment.success",
+      "amount": 500,
+      "currency": "USD",
+      "note": "auto-added-field"
+    },
+    "timestamp": "2026-07-12T22:12:09.006Z"
+  },
+  {
+    "userId": "anonymous",
+    "action": "GET /schema/stripe",
+    "payload": {},
+    "timestamp": "2026-07-12T22:12:09.029Z"
+  },
+  {
+    "userId": "anonymous",
+    "action": "GET /history/alice",
+    "payload": {},
+    "timestamp": "2026-07-12T22:15:17.064Z"
+  },
+  {
+    "userId": "anonymous",
+    "action": "GET /schema/shopify",
+    "payload": {},
+    "timestamp": "2026-07-12T22:15:17.355Z"
+  },
+  {
+    "userId": "anonymous",
+    "action": "GET /favicon.ico",
+    "payload": {},
+    "timestamp": "2026-07-12T22:15:37.447Z"
+  },
+  {
+    "userId": "alice",
+    "action": "POST /webhook/stripe",
+    "payload": {
+      "userId": "alice",
+      "eventType": "payment.success",
+      "amount": 500,
+      "currency": "USD"
+    },
+    "timestamp": "2026-07-12T22:15:43.673Z"
+  },
+  {
+    "userId": "anonymous",
+    "action": "GET /schema/stripe",
+    "payload": {},
+    "timestamp": "2026-07-12T22:15:44.095Z"
+  },
+  {
+    "userId": "alice",
+    "action": "POST /webhook/stripe",
+    "payload": {
+      "userId": "alice",
+      "eventType": "payment.success",
+      "amount": 500,
+      "currency": "USD",
+      "note": "auto-added-field"
+    },
+    "timestamp": "2026-07-12T22:15:45.740Z"
+  },
+  {
+    "userId": "anonymous",
+    "action": "GET /schema/stripe",
+    "payload": {},
+    "timestamp": "2026-07-12T22:15:45.772Z"
+  },
+  {
+    "userId": "anonymous",
+    "action": "GET /history/alice",
+    "payload": {},
+    "timestamp": "2026-07-12T22:15:47.039Z"
+  },
+  {
+    "userId": "anonymous",
+    "action": "GET /schema/shopify",
+    "payload": {},
+    "timestamp": "2026-07-12T22:15:50.048Z"
+  },
+  {
+    "userId": "anonymous",
+    "action": "GET /schema/shopify",
+    "payload": {},
+    "timestamp": "2026-07-12T22:20:10.917Z"
+  },
+  {
+    "userId": "anonymous",
+    "action": "GET /favicon.ico",
+    "payload": {},
+    "timestamp": "2026-07-12T22:20:21.537Z"
+  },
+  {
+    "userId": "alice",
+    "action": "POST /webhook/stripe",
+    "payload": {
+      "userId": "alice",
+      "eventType": "payment.success",
+      "amount": 500,
+      "currency": "USD"
+    },
+    "timestamp": "2026-07-12T22:20:26.687Z"
+  },
+  {
+    "userId": "anonymous",
+    "action": "GET /schema/stripe",
+    "payload": {},
+    "timestamp": "2026-07-12T22:20:26.740Z"
+  },
+  {
+    "userId": "alice",
+    "action": "POST /webhook/stripe",
+    "payload": {
+      "userId": "alice",
+      "eventType": "payment.success",
+      "amount": 500,
+      "currency": "USD",
+      "note": "auto-added-field"
+    },
+    "timestamp": "2026-07-12T22:20:28.628Z"
+  },
+  {
+    "userId": "anonymous",
+    "action": "GET /schema/stripe",
+    "payload": {},
+    "timestamp": "2026-07-12T22:20:28.656Z"
+  },
+  {
+    "userId": "anonymous",
+    "action": "GET /history/alice",
+    "payload": {},
+    "timestamp": "2026-07-12T22:20:29.737Z"
+  },
+  {
+    "userId": "anonymous",
+    "action": "GET /schema/shopify",
+    "payload": {},
+    "timestamp": "2026-07-12T22:20:31.830Z"
+  },
+  {
+    "userId": "alice",
+    "action": "POST /webhook/shopify",
+    "payload": {
+      "userId": "alice",
+      "orderNumber": "SHOP-1029",
+      "total": 89.99,
+      "customerEmail": "test@example.com"
+    },
+    "timestamp": "2026-07-12T22:20:34.724Z"
+  },
+  {
+    "userId": "anonymous",
+    "action": "GET /schema/shopify",
+    "payload": {},
+    "timestamp": "2026-07-12T22:20:34.778Z"
+  },
+  {
+    "userId": "alice",
+    "action": "POST /webhook/shopify",
+    "payload": {
+      "userId": "alice",
+      "orderNumber": "SHOP-1029",
+      "total": 89.99,
+      "customerEmail": "test@example.com",
+      "note": "auto-added-field"
+    },
+    "timestamp": "2026-07-12T22:20:35.802Z"
+  },
+  {
+    "userId": "anonymous",
+    "action": "GET /schema/shopify",
+    "payload": {},
+    "timestamp": "2026-07-12T22:20:35.854Z"
+  },
+  {
+    "userId": "anonymous",
+    "action": "GET /history/alice",
+    "payload": {},
+    "timestamp": "2026-07-12T22:20:36.952Z"
   }
 ]
