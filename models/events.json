@@ -1205,5 +1205,29 @@
     "action": "GET /history/alice",
     "payload": {},
     "timestamp": "2026-07-12T22:20:36.952Z"
+  },
+  {
+    "userId": "anonymous",
+    "action": "GET /favicon.ico",
+    "payload": {},
+    "timestamp": "2026-07-12T22:26:28.110Z"
+  },
+  {
+    "userId": "anonymous",
+    "action": "POST /webhook/stripe",
+    "payload": {
+      "eventType": "payment.success",
+      "amount": 500
+    },
+    "timestamp": "2026-07-13T09:03:00.482Z"
+  },
+  {
+    "userId": "anonymous",
+    "action": "POST /webhook/stripe",
+    "payload": {
+      "eventType": "payment.success",
+      "amount": 250
+    },
+    "timestamp": "2026-07-13T11:15:24.598Z"
   }
 ]

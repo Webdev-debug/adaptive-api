@@ -1,31 +1,49 @@
 const express = require('express');
 const validateAndAdapt = require('./middleware/validateAndAdapt');
 const trackUser = require('./middleware/trackUser');
+const requireApiKey = require('./middleware/requireApiKey');
 const { getEventsForUser } = require('./services/eventService');
 const { getSchema } = require('./services/schemaService');
+const { generateApiKey } = require('./services/authService');
+const { setForwardUrl, forwardEvent } = require('./services/forwardService');
 
 const app = express();
 app.use(express.json());
-app.use(trackUser);
 app.use(express.static('public'));
 
-app.post('/webhook/:source', (req, res, next) => {
-  validateAndAdapt(req.params.source)(req, res, next);
-}, (req, res) => {
-  res.json({ message: 'Event received', source: req.params.source, data: req.body });
+app.post('/signup', (req, res) => {
+  const name = (req.body && req.body.name) || 'unnamed';
+  const key = generateApiKey(name);
+  res.json({ apiKey: key });
 });
 
-app.post('/orders', validateAndAdapt('createOrder'), (req, res) => {
+app.post('/configure/:source', requireApiKey, (req, res) => {
+  const url = req.body && req.body.url;
+  if (!url) {
+    return res.status(400).json({ error: 'Provide a url in the request body' });
+  }
+  setForwardUrl(req.apiKey, req.params.source, url);
+  res.json({ message: 'Forward URL saved', source: req.params.source, url });
+});
+
+app.post('/webhook/:source', requireApiKey, trackUser, (req, res, next) => {
+  validateAndAdapt(req.params.source)(req, res, next);
+}, async (req, res) => {
+  const forwardResult = await forwardEvent(req.apiKey, req.params.source, req.body);
+  res.json({ message: 'Event received', source: req.params.source, data: req.body, forward: forwardResult });
+});
+
+app.post('/orders', requireApiKey, trackUser, validateAndAdapt('createOrder'), (req, res) => {
   res.json({ message: 'Order received', data: req.body });
 });
 
-app.get('/history/:userId', (req, res) => {
-  const events = getEventsForUser(req.params.userId);
+app.get('/history/:userId', requireApiKey, (req, res) => {
+  const events = getEventsForUser(req.apiKey, req.params.userId);
   res.json({ userId: req.params.userId, events });
 });
 
-app.get('/schema/:resource', (req, res) => {
-  const schema = getSchema(req.params.resource);
+app.get('/schema/:resource', requireApiKey, (req, res) => {
+  const schema = getSchema(req.apiKey, req.params.resource);
   if (!schema) {
     return res.status(404).json({ error: 'Resource not found' });
   }
