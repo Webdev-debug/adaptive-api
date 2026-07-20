@@ -1229,5 +1229,145 @@
       "amount": 250
     },
     "timestamp": "2026-07-13T11:15:24.598Z"
+  },
+  {
+    "userId": "alice",
+    "action": "POST /webhook/stripe",
+    "payload": {
+      "userId": "alice",
+      "eventType": "payment.success",
+      "amount": 500,
+      "currency": "USD"
+    },
+    "timestamp": "2026-07-13T11:19:34.359Z"
+  },
+  {
+    "userId": "alice",
+    "action": "POST /webhook/stripe",
+    "payload": {
+      "userId": "alice",
+      "eventType": "payment.success",
+      "amount": 500,
+      "currency": "USD"
+    },
+    "timestamp": "2026-07-13T11:19:34.388Z"
+  },
+  {
+    "userId": "alice",
+    "action": "POST /webhook/stripe",
+    "payload": {
+      "userId": "alice",
+      "eventType": "payment.success",
+      "amount": 500,
+      "currency": "USD"
+    },
+    "timestamp": "2026-07-13T11:19:54.222Z"
+  },
+  {
+    "userId": "alice",
+    "action": "POST /webhook/stripe",
+    "payload": {
+      "userId": "alice",
+      "eventType": "payment.success",
+      "amount": 500,
+      "currency": "USD",
+      "note": "auto-added-field"
+    },
+    "timestamp": "2026-07-13T11:20:00.808Z"
+  },
+  {
+    "userId": "alice",
+    "action": "POST /webhook/stripe",
+    "payload": {
+      "userId": "alice",
+      "eventType": "payment.success",
+      "amount": 500,
+      "currency": "USD"
+    },
+    "timestamp": "2026-07-20T19:25:24.393Z"
+  },
+  {
+    "userId": "alice",
+    "action": "POST /webhook/stripe",
+    "payload": {
+      "userId": "alice",
+      "eventType": "payment.success",
+      "amount": 500,
+      "currency": "USD"
+    },
+    "timestamp": "2026-07-20T19:29:24.306Z"
+  },
+  {
+    "userId": "alice",
+    "action": "POST /webhook/stripe",
+    "payload": {
+      "userId": "alice",
+      "eventType": "payment.success",
+      "amount": 500,
+      "currency": "USD"
+    },
+    "timestamp": "2026-07-20T19:30:07.273Z"
+  },
+  {
+    "userId": "alice",
+    "action": "POST /webhook/stripe",
+    "payload": {
+      "userId": "alice",
+      "eventType": "payment.success",
+      "amount": 500,
+      "currency": "USD",
+      "note": "auto-added-field"
+    },
+    "timestamp": "2026-07-20T19:30:07.414Z"
+  },
+  {
+    "userId": "alice",
+    "action": "POST /webhook/stripe",
+    "payload": {
+      "userId": "alice",
+      "eventType": "payment.success",
+      "amount": 500,
+      "currency": "USD"
+    },
+    "timestamp": "2026-07-20T19:30:20.790Z"
+  },
+  {
+    "userId": "alice",
+    "action": "POST /webhook/stripe",
+    "payload": {
+      "userId": "alice",
+      "eventType": "payment.success",
+      "amount": 500,
+      "currency": "USD",
+      "note": "auto-added-field"
+    },
+    "timestamp": "2026-07-20T19:30:29.740Z"
+  },
+  {
+    "userId": "anonymous",
+    "action": "POST /webhook/stripe",
+    "payload": {
+      "eventType": "payment.success",
+      "amount": 100
+    },
+    "timestamp": "2026-07-20T20:27:14.003Z"
+  },
+  {
+    "userId": "anonymous",
+    "action": "POST /webhook/stripe",
+    "payload": {
+      "eventType": "payment.success",
+      "amount": 100
+    },
+    "timestamp": "2026-07-20T20:27:14.146Z"
+  },
+  {
+    "userId": "anonymous",
+    "action": "POST /webhook/stripe",
+    "payload": {
+      "eventType": "payment.success",
+      "amount": 100
+    },
+    "timestamp": "2026-07-20T20:30:14.842Z"
   }
 ]

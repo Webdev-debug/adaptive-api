@@ -3,5 +3,23 @@
     "[object Object]": {
       "version": 1
     }
+  },
+  "dk_394b5b444beefb6fbed24ff93c8841f4": {
+    "stripe": {
+      "version": 1,
+      "eventCount": 3,
+      "fields": {
+        "eventType": {
+          "type": "string",
+          "required": true,
+          "seenCount": 3
+        },
+        "amount": {
+          "type": "number",
+          "required": true,
+          "seenCount": 3
+        }
+      }
+    }
   }
 }

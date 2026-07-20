@@ -1,17 +1,17 @@
-const { getSchema, updateSchema, createSchema } = require('../services/schemaService');
+const { getSchema, updateSchema, createSchema, trackOccurrence } = require('../services/schemaService');
 
 function validateAndAdapt(resource) {
   return (req, res, next) => {
-    let schema = getSchema(resource);
+    const apiKey = req.apiKey;
+    let schema = getSchema(apiKey, resource);
     const body = req.body || {};
 
     if (!schema) {
       const initialFields = {};
       for (const field in body) {
-        initialFields[field] = { type: typeof body[field], required: false };
+        initialFields[field] = { type: typeof body[field] };
       }
-      createSchema(resource, initialFields);
-      schema = getSchema(resource);
+      createSchema(apiKey, resource, initialFields);
       return next();
     }
 
@@ -33,7 +33,7 @@ function validateAndAdapt(resource) {
           errors.push(`Field ${field} expected ${expectedType}, got ${actualType}`);
         }
       } else {
-        newFields[field] = { type: typeof body[field], required: false };
+        newFields[field] = { type: typeof body[field] };
       }
     }
 
@@ -42,8 +42,10 @@ function validateAndAdapt(resource) {
     }
 
     if (Object.keys(newFields).length > 0) {
-      updateSchema(resource, newFields);
+      updateSchema(apiKey, resource, newFields);
     }
+
+    trackOccurrence(apiKey, resource, Object.keys(body));
 
     next();
   };

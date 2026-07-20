@@ -3,7 +3,7 @@ const validateAndAdapt = require('./middleware/validateAndAdapt');
 const trackUser = require('./middleware/trackUser');
 const requireApiKey = require('./middleware/requireApiKey');
 const { getEventsForUser } = require('./services/eventService');
-const { getSchema } = require('./services/schemaService');
+const { getSchema, getSchemaHistory } = require('./services/schemaService');
 const { generateApiKey } = require('./services/authService');
 const { setForwardUrl, forwardEvent } = require('./services/forwardService');
 
@@ -48,6 +48,11 @@ app.get('/schema/:resource', requireApiKey, (req, res) => {
     return res.status(404).json({ error: 'Resource not found' });
   }
   res.json(schema);
+});
+
+app.get('/schema/:resource/history', requireApiKey, (req, res) => {
+  const history = getSchemaHistory(req.apiKey, req.params.resource);
+  res.json({ resource: req.params.resource, history });
 });
 
 app.listen(3000, () => console.log('Server running on http://localhost:3000'));

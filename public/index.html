@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Driftless — webhooks that never break on new data</title>
+<title>Driftless — self-adapting webhook infrastructure</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;900&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
 
@@ -36,6 +36,7 @@ body{
   font-family:'Inter',sans-serif;
   line-height:1.5;
   animation:gridDrift 6s linear infinite;
+  overflow-x:hidden;
 }
 
 .wrap{max-width:880px;margin:0 auto;padding:0 20px;}
@@ -43,14 +44,28 @@ nav{display:flex;justify-content:space-between;align-items:center;padding:22px 0
 .logo{font-family:'JetBrains Mono',monospace;font-weight:500;font-size:15px;letter-spacing:0.5px;}
 .logo span{color:var(--accent);}
 nav a{color:var(--dim);text-decoration:none;font-size:14px;margin-left:18px;}
-.hero{padding:56px 0 40px;}
+.hero{padding:56px 0 32px;}
 .stamp{display:inline-block;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent);border:1px dashed var(--accent);padding:4px 10px;transform:rotate(-2deg);margin-bottom:18px;}
 h1{font-family:'Big Shoulders Display',sans-serif;font-weight:900;font-size:clamp(38px,7vw,64px);line-height:0.98;margin:0 0 18px;text-transform:uppercase;}
 h1 em{color:var(--accent);font-style:normal;font-family:inherit;}
-.sub{color:var(--dim);font-size:17px;max-width:520px;margin:0 0 28px;}
+.sub{color:var(--dim);font-size:17px;max-width:540px;margin:0 0 28px;}
 .cta{display:inline-block;background:var(--accent);color:#001018;font-family:'JetBrains Mono',monospace;font-weight:500;padding:12px 20px;text-decoration:none;font-size:14px;transition:transform 0.1s ease;border:none;cursor:pointer;}
 .cta:active{transform:scale(0.96);}
-.spec-grid{display:grid;grid-template-columns:1fr;gap:16px;padding:20px 0 40px;}
+.cta:disabled{opacity:0.5;}
+
+.stackstrip{border-top:1px solid var(--line);border-bottom:1px solid var(--line);overflow:hidden;padding:16px 0;margin-bottom:8px;}
+.stackstrip .track{display:flex;gap:48px;width:max-content;animation:scrollStack 22s linear infinite;}
+.stackstrip span{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--dim);white-space:nowrap;letter-spacing:0.5px;}
+.stackstrip span::before{content:'◆';color:var(--accent);margin-right:8px;font-size:10px;}
+@keyframes scrollStack{from{transform:translateX(0);}to{transform:translateX(-50%);}}
+
+.phonebanner{border:1px solid var(--accent);background:linear-gradient(90deg, rgba(79,195,247,0.08), transparent);padding:18px 20px;margin:32px 0;display:flex;align-items:center;gap:16px;flex-wrap:wrap;}
+.phonebanner .icon{font-family:'JetBrains Mono',monospace;font-size:28px;color:var(--accent);}
+.phonebanner .text{flex:1;min-width:200px;}
+.phonebanner .text strong{display:block;font-family:'Big Shoulders Display',sans-serif;font-size:18px;text-transform:uppercase;letter-spacing:0.3px;margin-bottom:2px;}
+.phonebanner .text span{color:var(--dim);font-size:13px;}
+
+.spec-grid{display:grid;grid-template-columns:1fr;gap:16px;padding:32px 0 40px;}
 @media(min-width:640px){.spec-grid{grid-template-columns:repeat(3,1fr);}}
 .spec-card{border:1px solid var(--line);padding:18px;background:var(--panel);}
 .spec-card .tag{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent2);display:block;margin-bottom:8px;}
@@ -64,6 +79,14 @@ h1 em{color:var(--accent);font-style:normal;font-family:inherit;}
 .keybox code{display:block;background:#000;border:1px solid var(--line);padding:10px;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent);word-break:break-all;margin-top:10px;}
 .keybox .warn{color:var(--dim);font-size:12px;margin-top:8px;display:block;}
 .keybox.has-key{border-color:var(--accent);}
+
+.forwardbox{border:1px dashed var(--line);padding:16px;margin-bottom:24px;}
+.forwardbox p{color:var(--dim);font-size:13px;margin:0 0 10px;}
+.forwardbox input{width:100%;background:#000;border:1px solid var(--line);color:var(--ink);padding:10px;font-family:'JetBrains Mono',monospace;font-size:12px;margin-bottom:10px;}
+.forwardbox .row{display:flex;gap:8px;}
+.forwardbox button{background:transparent;border:1px solid var(--line);color:var(--ink);font-family:'JetBrains Mono',monospace;font-size:12px;padding:10px 14px;cursor:pointer;}
+.forwardbox button:hover{border-color:var(--accent);color:var(--accent);}
+.forwardbox .status{font-size:12px;color:var(--dim);margin-top:8px;display:block;}
 
 .demo-grid{display:grid;grid-template-columns:1fr;gap:20px;}
 @media(min-width:720px){.demo-grid{grid-template-columns:1fr 1fr;}}
@@ -96,6 +119,18 @@ button.action:active{transform:scale(0.97);}
 button.action:disabled{opacity:0.5;}
 .output{background:var(--panel);border:1px solid var(--line);padding:12px;font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--accent2);white-space:pre-wrap;max-height:220px;overflow-y:auto;margin-top:10px;}
 .output.err{color:var(--danger);}
+
+.timeline{margin-top:24px;}
+.timeline h3{font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--dim);text-transform:uppercase;letter-spacing:0.5px;margin:0 0 14px;}
+.timeline-item{display:flex;gap:14px;padding-bottom:16px;position:relative;}
+.timeline-item:not(:last-child)::before{content:'';position:absolute;left:14px;top:26px;bottom:-4px;width:1px;background:var(--line);}
+.timeline-dot{width:29px;height:29px;flex-shrink:0;border:1px solid var(--accent);border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--accent);background:#000;z-index:1;}
+.timeline-body{flex:1;padding-top:2px;}
+.timeline-body .when{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--dim);}
+.timeline-body .fields{font-family:'JetBrains Mono',monospace;font-size:13px;margin-top:3px;}
+.timeline-body .fields span{color:var(--accent2);}
+.timeline-empty{color:var(--dim);font-size:13px;font-family:'JetBrains Mono',monospace;}
+
 table{width:100%;border-collapse:collapse;font-size:13px;}
 th,td{text-align:left;padding:10px 8px;border-bottom:1px solid var(--line);font-family:'JetBrains Mono',monospace;}
 th{color:var(--dim);font-weight:500;font-size:12px;text-transform:uppercase;}
@@ -113,27 +148,54 @@ footer a{color:var(--accent);}
 </nav>
 
 <div class="hero">
-  <div class="stamp">MULTI-SOURCE · AUTO-LEARNING</div>
-  <h1>One endpoint.<br>Any <em>webhook</em>.<br>Never breaks.</h1>
-  <p class="sub">Point Stripe, Shopify, or anything else at Driftless. Each source gets its own schema, learned automatically from the first payload it ever sends — no setup, no config files, no redeploys when a provider changes their format.</p>
+  <div class="stamp">SELF-ADAPTING · MULTI-TENANT · EDGE-READY</div>
+  <h1>Infrastructure that<br>learns your data<br><em>before</em> it breaks.</h1>
+  <p class="sub">Driftless sits in front of any webhook source and resolves the correct schema in real time — validating, versioning, and relaying every event without a single redeploy, no matter how the upstream payload shifts.</p>
   <a class="cta" href="#demo">RUN THE LIVE DEMO ↓</a>
+</div>
+</div>
+
+<div class="stackstrip">
+  <div class="track">
+    <span>Node.js Runtime</span><span>Express Core</span><span>Render Edge</span><span>GitHub CI</span><span>Schema Mesh</span><span>Webhook Relay</span><span>JSON Type Engine</span><span>Multi-Tenant Auth</span>
+    <span>Node.js Runtime</span><span>Express Core</span><span>Render Edge</span><span>GitHub CI</span><span>Schema Mesh</span><span>Webhook Relay</span><span>JSON Type Engine</span><span>Multi-Tenant Auth</span>
+  </div>
+</div>
+
+<div class="wrap">
+
+<div class="phonebanner">
+  <div class="icon">▣</div>
+  <div class="text">
+    <strong>Built entirely on a phone.</strong>
+    <span>No laptop, no IDE — every line written, tested, and deployed from a Termux terminal on Android. The infrastructure above is real, and so is that fact.</span>
+  </div>
 </div>
 
 <div class="spec-grid">
-  <div class="spec-card"><span class="tag">01 — ISOLATE</span><p>Every account gets its own private schemas and event history, protected by an API key. Nothing is shared between accounts.</p></div>
-  <div class="spec-card"><span class="tag">02 — ADAPT</span><p>First payload from a new source creates its schema on the spot. Every payload after that validates and evolves it.</p></div>
-  <div class="spec-card"><span class="tag">03 — TRACK</span><p>Every event is logged and attributed, so you can pull a full history per user or per source, anytime.</p></div>
+  <div class="spec-card"><span class="tag">01 — ISOLATE</span><p>Every account operates in its own sealed namespace — schemas, event history, and forwarding rules never cross tenant boundaries.</p></div>
+  <div class="spec-card"><span class="tag">02 — ADAPT</span><p>The first payload from a new source resolves its schema on contact. Every payload after that validates against it and evolves it in place.</p></div>
+  <div class="spec-card"><span class="tag">03 — RELAY</span><p>Point any source at your own backend. Validated events are forwarded automatically, in real time, with delivery status returned inline.</p></div>
 </div>
 
 <div class="demo" id="demo">
   <h2>Try it live</h2>
-  <p class="lead">Get a free API key, then send real events and watch the blueprint update.</p>
+  <p class="lead">Get a free API key, point a source at your own URL, then send events and watch them land.</p>
 
   <div class="keybox" id="keybox">
     <p>You need a key to try the demo below. It's free and takes one tap.</p>
     <button class="cta" onclick="signup()">GET FREE API KEY</button>
     <code id="keydisplay" style="display:none;"></code>
     <span class="warn" id="keywarn" style="display:none;">This is a demo key tied to this browser session only — not saved anywhere permanent.</span>
+  </div>
+
+  <div class="forwardbox">
+    <p>Optional: paste a <a href="https://webhook.site" target="_blank" style="color:var(--accent);">webhook.site</a> URL to see events relayed live to a real destination.</p>
+    <input type="text" id="forward-url" placeholder="https://webhook.site/your-unique-id">
+    <div class="row">
+      <button onclick="saveForwardUrl()" id="btn-save-forward" disabled>Save forward URL for current source</button>
+    </div>
+    <span class="status" id="forward-status"></span>
   </div>
 
   <div class="demo-grid">
@@ -147,6 +209,11 @@ footer a{color:var(--accent);}
         <div id="blueprint-fields"><span style="color:var(--dim)">Get an API key to begin.</span></div>
       </div>
       <div class="output" id="output">Response will show here.</div>
+
+      <div class="timeline">
+        <h3>Schema evolution</h3>
+        <div id="timeline-list"><span class="timeline-empty">No history yet.</span></div>
+      </div>
     </div>
     <div class="actions">
       <button class="action" id="btn-send" onclick="sendEvent()" disabled>→ Send event to current source</button>
@@ -161,8 +228,10 @@ footer a{color:var(--accent);}
   <table>
     <tr><th>Method</th><th>Path</th><th>Purpose</th></tr>
     <tr><td class="method">POST</td><td>/signup</td><td>Get a free API key.</td></tr>
-    <tr><td class="method">POST</td><td>/webhook/:source</td><td>Send an event from any named source. Requires x-api-key header.</td></tr>
+    <tr><td class="method">POST</td><td>/configure/:source</td><td>Set a forward URL for a source. Requires x-api-key.</td></tr>
+    <tr><td class="method">POST</td><td>/webhook/:source</td><td>Send an event. Validates, adapts, and forwards if configured.</td></tr>
     <tr><td class="method">GET</td><td>/schema/:resource</td><td>Current live schema for a source. Requires x-api-key.</td></tr>
+    <tr><td class="method">GET</td><td>/schema/:resource/history</td><td>Full version history of a schema's evolution. Requires x-api-key.</td></tr>
     <tr><td class="method">GET</td><td>/history/:userId</td><td>Full tracked event history for a user. Requires x-api-key.</td></tr>
   </table>
 </div>
@@ -181,6 +250,9 @@ const versionTag = document.getElementById('version-tag');
 const keybox = document.getElementById('keybox');
 const keydisplay = document.getElementById('keydisplay');
 const keywarn = document.getElementById('keywarn');
+const forwardStatus = document.getElementById('forward-status');
+const btnSaveForward = document.getElementById('btn-save-forward');
+const timelineList = document.getElementById('timeline-list');
 const allButtons = ['btn-send','btn-newfield','btn-history'].map(id => document.getElementById(id));
 
 const sampleData = {
@@ -213,10 +285,33 @@ async function signup(){
     keywarn.style.display = 'block';
     keybox.classList.add('has-key');
     allButtons.forEach(b => b.disabled = false);
+    btnSaveForward.disabled = false;
     loadSchema(currentSource);
+    loadTimeline(currentSource);
   } catch(e){
     keydisplay.style.display = 'block';
     keydisplay.textContent = 'Signup failed: ' + e.message;
+  }
+}
+
+async function saveForwardUrl(){
+  if(!apiKey) return;
+  const url = document.getElementById('forward-url').value.trim();
+  if(!url){
+    forwardStatus.textContent = 'Enter a URL first.';
+    return;
+  }
+  forwardStatus.textContent = 'Saving...';
+  try {
+    const res = await fetchWithTimeout('/configure/' + currentSource, {
+      method:'POST',
+      headers:{'Content-Type':'application/json','x-api-key':apiKey},
+      body: JSON.stringify({ url })
+    }, 8000);
+    const data = await res.json();
+    forwardStatus.textContent = 'Saved for "' + currentSource + '". Send an event below to test it.';
+  } catch(e){
+    forwardStatus.textContent = 'Failed to save: ' + e.message;
   }
 }
 
@@ -224,7 +319,37 @@ function setSource(src){
   currentSource = src;
   document.getElementById('tab-stripe').classList.toggle('active', src==='stripe');
   document.getElementById('tab-shopify').classList.toggle('active', src==='shopify');
-  if(apiKey) loadSchema(src);
+  forwardStatus.textContent = '';
+  if(apiKey){
+    loadSchema(src);
+    loadTimeline(src);
+  }
+}
+
+async function loadTimeline(sourceAtCallTime){
+  if(!apiKey) return;
+  const src = sourceAtCallTime || currentSource;
+  try {
+    const res = await fetchWithTimeout('/schema/' + src + '/history', { headers:{'x-api-key':apiKey} }, 8000);
+    if(src !== currentSource) return;
+    const data = await res.json();
+    if(!data.history || data.history.length === 0){
+      timelineList.innerHTML = '<span class="timeline-empty">No history yet — send an event to start the timeline.</span>';
+      return;
+    }
+    timelineList.innerHTML = '';
+    data.history.slice().reverse().forEach(entry => {
+      const item = document.createElement('div');
+      item.className = 'timeline-item';
+      const time = new Date(entry.timestamp).toLocaleTimeString();
+      const fieldsStr = entry.addedFields.map(f => '<span>' + f + '</span>').join(', ');
+      item.innerHTML = '<div class="timeline-dot">v' + entry.version + '</div><div class="timeline-body"><div class="when">' + time + '</div><div class="fields">+ ' + fieldsStr + '</div></div>';
+      timelineList.appendChild(item);
+    });
+  } catch(e){
+    if(src !== currentSource) return;
+    timelineList.innerHTML = '<span class="timeline-empty">Could not load timeline.</span>';
+  }
 }
 
 async function loadSchema(sourceAtCallTime){
@@ -278,6 +403,7 @@ async function post(url, data){
     const json = await res.json();
     output.textContent = JSON.stringify(json, null, 2);
     await loadSchema(currentSource);
+    await loadTimeline(currentSource);
   } catch(e){
     output.classList.add('err');
     output.textContent = e.name === 'AbortError' ? 'Request timed out after 8s.' : 'Request failed: ' + e.message;

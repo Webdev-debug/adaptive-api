@@ -1,0 +1,14 @@
+{
+  "dk_394b5b444beefb6fbed24ff93c8841f4": {
+    "stripe": [
+      {
+        "version": 1,
+        "addedFields": [
+          "eventType",
+          "amount"
+        ],
+        "timestamp": "2026-07-20T20:27:14.066Z"
+      }
+    ]
+  }
+}
