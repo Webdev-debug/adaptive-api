@@ -17,6 +17,7 @@
   --accent:#4FC3F7;
   --accent2:#3B82F6;
   --danger:#FF6B6B;
+  --gold:#FFD166;
 }
 *{box-sizing:border-box;}
 
@@ -92,6 +93,7 @@ h1 em{color:var(--accent);font-style:normal;font-family:inherit;}
 @media(min-width:720px){.demo-grid{grid-template-columns:1fr 1fr;}}
 .blueprint{border:1px dashed var(--line);padding:16px;position:relative;}
 .blueprint .version{position:absolute;top:-12px;right:12px;background:#000000;color:var(--accent);font-family:'JetBrains Mono',monospace;font-size:12px;padding:0 6px;display:inline-block;}
+.blueprint .stability{position:absolute;top:-12px;left:12px;background:#000000;color:var(--gold);font-family:'JetBrains Mono',monospace;font-size:12px;padding:0 6px;display:inline-block;}
 
 @keyframes versionPulse{
   0%{transform:scale(1);color:var(--accent);}
@@ -104,10 +106,15 @@ h1 em{color:var(--accent);font-style:normal;font-family:inherit;}
   from{opacity:0;transform:translateX(-6px);}
   to{opacity:1;transform:translateX(0);}
 }
-.field-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid rgba(79,195,247,0.15);font-family:'JetBrains Mono',monospace;font-size:13px;animation:drawIn 0.35s ease both;}
+.field-row{padding:8px 0;border-bottom:1px solid rgba(79,195,247,0.15);font-family:'JetBrains Mono',monospace;font-size:13px;animation:drawIn 0.35s ease both;}
 .field-row:last-child{border-bottom:none;}
+.field-top{display:flex;justify-content:space-between;align-items:center;}
 .pill{font-size:11px;padding:2px 7px;border:1px solid var(--line);color:var(--dim);margin-left:6px;}
 .pill.req{color:var(--danger);border-color:var(--danger);}
+.confidence-track{height:3px;background:rgba(122,167,255,0.15);margin-top:6px;overflow:hidden;}
+.confidence-fill{height:100%;background:var(--gold);transition:width 0.4s ease;}
+.confidence-label{font-size:10px;color:var(--dim);margin-top:3px;display:block;}
+
 .source-tabs{display:flex;gap:8px;margin-bottom:14px;}
 .source-tabs button{flex:1;background:transparent;border:1px solid var(--line);color:var(--dim);font-family:'JetBrains Mono',monospace;font-size:12px;padding:8px;cursor:pointer;transition:transform 0.1s ease;}
 .source-tabs button.active{border-color:var(--accent);color:var(--accent);}
@@ -148,17 +155,17 @@ footer a{color:var(--accent);}
 </nav>
 
 <div class="hero">
-  <div class="stamp">SELF-ADAPTING · MULTI-TENANT · EDGE-READY</div>
+  <div class="stamp">SELF-ADAPTING · CONFIDENCE-SCORED · EDGE-READY</div>
   <h1>Infrastructure that<br>learns your data<br><em>before</em> it breaks.</h1>
-  <p class="sub">Driftless sits in front of any webhook source and resolves the correct schema in real time — validating, versioning, and relaying every event without a single redeploy, no matter how the upstream payload shifts.</p>
+  <p class="sub">Driftless doesn't just accept your data — it scores its own confidence in every field, promoting patterns to required once they prove consistent, and versioning every change it makes along the way.</p>
   <a class="cta" href="#demo">RUN THE LIVE DEMO ↓</a>
 </div>
 </div>
 
 <div class="stackstrip">
   <div class="track">
-    <span>Node.js Runtime</span><span>Express Core</span><span>Render Edge</span><span>GitHub CI</span><span>Schema Mesh</span><span>Webhook Relay</span><span>JSON Type Engine</span><span>Multi-Tenant Auth</span>
-    <span>Node.js Runtime</span><span>Express Core</span><span>Render Edge</span><span>GitHub CI</span><span>Schema Mesh</span><span>Webhook Relay</span><span>JSON Type Engine</span><span>Multi-Tenant Auth</span>
+    <span>Node.js Runtime</span><span>Express Core</span><span>Render Edge</span><span>GitHub CI</span><span>Schema Mesh</span><span>Confidence Engine</span><span>Webhook Relay</span><span>Multi-Tenant Auth</span>
+    <span>Node.js Runtime</span><span>Express Core</span><span>Render Edge</span><span>GitHub CI</span><span>Schema Mesh</span><span>Confidence Engine</span><span>Webhook Relay</span><span>Multi-Tenant Auth</span>
   </div>
 </div>
 
@@ -173,14 +180,14 @@ footer a{color:var(--accent);}
 </div>
 
 <div class="spec-grid">
-  <div class="spec-card"><span class="tag">01 — ISOLATE</span><p>Every account operates in its own sealed namespace — schemas, event history, and forwarding rules never cross tenant boundaries.</p></div>
-  <div class="spec-card"><span class="tag">02 — ADAPT</span><p>The first payload from a new source resolves its schema on contact. Every payload after that validates against it and evolves it in place.</p></div>
+  <div class="spec-card"><span class="tag">01 — ADAPT</span><p>The first payload from a new source resolves its schema on contact. Every payload after that validates against it and evolves it in place.</p></div>
+  <div class="spec-card"><span class="tag">02 — SCORE</span><p>Every field earns a live confidence score based on how consistently it appears. Cross the threshold, and it's auto-promoted to required.</p></div>
   <div class="spec-card"><span class="tag">03 — RELAY</span><p>Point any source at your own backend. Validated events are forwarded automatically, in real time, with delivery status returned inline.</p></div>
 </div>
 
 <div class="demo" id="demo">
   <h2>Try it live</h2>
-  <p class="lead">Get a free API key, point a source at your own URL, then send events and watch them land.</p>
+  <p class="lead">Get a free API key, send the same event a few times, and watch confidence climb toward required.</p>
 
   <div class="keybox" id="keybox">
     <p>You need a key to try the demo below. It's free and takes one tap.</p>
@@ -205,6 +212,7 @@ footer a{color:var(--accent);}
         <button id="tab-shopify" onclick="setSource('shopify')">shopify</button>
       </div>
       <div class="blueprint">
+        <span class="stability" id="stability-tag">— %</span>
         <span class="version" id="version-tag">v0</span>
         <div id="blueprint-fields"><span style="color:var(--dim)">Get an API key to begin.</span></div>
       </div>
@@ -229,10 +237,10 @@ footer a{color:var(--accent);}
     <tr><th>Method</th><th>Path</th><th>Purpose</th></tr>
     <tr><td class="method">POST</td><td>/signup</td><td>Get a free API key.</td></tr>
     <tr><td class="method">POST</td><td>/configure/:source</td><td>Set a forward URL for a source. Requires x-api-key.</td></tr>
-    <tr><td class="method">POST</td><td>/webhook/:source</td><td>Send an event. Validates, adapts, and forwards if configured.</td></tr>
-    <tr><td class="method">GET</td><td>/schema/:resource</td><td>Current live schema for a source. Requires x-api-key.</td></tr>
-    <tr><td class="method">GET</td><td>/schema/:resource/history</td><td>Full version history of a schema's evolution. Requires x-api-key.</td></tr>
-    <tr><td class="method">GET</td><td>/history/:userId</td><td>Full tracked event history for a user. Requires x-api-key.</td></tr>
+    <tr><td class="method">POST</td><td>/webhook/:source</td><td>Send an event. Validates, scores confidence, adapts, and forwards if configured.</td></tr>
+    <tr><td class="method">GET</td><td>/schema/:resource</td><td>Current live schema, including per-field confidence.</td></tr>
+    <tr><td class="method">GET</td><td>/schema/:resource/history</td><td>Full version history of a schema's evolution.</td></tr>
+    <tr><td class="method">GET</td><td>/history/:userId</td><td>Full tracked event history for a user.</td></tr>
   </table>
 </div>
 
@@ -247,6 +255,7 @@ const knownVersions = {};
 const output = document.getElementById('output');
 const fieldsBox = document.getElementById('blueprint-fields');
 const versionTag = document.getElementById('version-tag');
+const stabilityTag = document.getElementById('stability-tag');
 const keybox = document.getElementById('keybox');
 const keydisplay = document.getElementById('keydisplay');
 const keywarn = document.getElementById('keywarn');
@@ -361,6 +370,7 @@ async function loadSchema(sourceAtCallTime){
     if(res.status === 404){
       fieldsBox.innerHTML = '<span style="color:var(--dim)">No events yet — send one to create this schema.</span>';
       versionTag.textContent = 'v0';
+      stabilityTag.textContent = '— %';
       return;
     }
     const data = await res.json();
@@ -375,12 +385,28 @@ async function loadSchema(sourceAtCallTime){
     knownVersions[src] = data.version;
 
     versionTag.textContent = 'v' + data.version;
+
+    const fieldNames = Object.keys(data.fields);
+    let avgConfidence = 0;
+    fieldNames.forEach(name => {
+      const f = data.fields[name];
+      const conf = data.eventCount ? Math.round((f.seenCount || 0) / data.eventCount * 100) : 0;
+      avgConfidence += conf;
+    });
+    avgConfidence = fieldNames.length ? Math.round(avgConfidence / fieldNames.length) : 0;
+    stabilityTag.textContent = avgConfidence + '% STABLE';
+
     fieldsBox.innerHTML = '';
     for(const name in data.fields){
       const f = data.fields[name];
+      const conf = data.eventCount ? Math.round((f.seenCount || 0) / data.eventCount * 100) : 0;
       const row = document.createElement('div');
       row.className = 'field-row';
-      row.innerHTML = '<span>' + name + ' <span style="color:var(--dim)">(' + f.type + ')</span></span><span><span class="pill ' + (f.required ? 'req' : '') + '">' + (f.required ? 'required' : 'optional') + '</span></span>';
+      row.innerHTML =
+        '<div class="field-top"><span>' + name + ' <span style="color:var(--dim)">(' + f.type + ')</span></span>' +
+        '<span><span class="pill ' + (f.required ? 'req' : '') + '">' + (f.required ? 'required' : 'optional') + '</span></span></div>' +
+        '<div class="confidence-track"><div class="confidence-fill" style="width:' + conf + '%"></div></div>' +
+        '<span class="confidence-label">' + conf + '% confidence (' + (f.seenCount||0) + '/' + data.eventCount + ' events)</span>';
       fieldsBox.appendChild(row);
     }
   } catch(e){

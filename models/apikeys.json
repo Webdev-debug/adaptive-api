@@ -146,5 +146,13 @@
   "dk_394b5b444beefb6fbed24ff93c8841f4": {
     "name": "promotion-test",
     "createdAt": "2026-07-20T20:23:46.114Z"
+  },
+  "dk_9397d38498aac4d234b41abf4b3202a2": {
+    "name": "demo-visitor",
+    "createdAt": "2026-07-20T20:39:02.287Z"
+  },
+  "dk_5877928a1d485d36688dc9c3a4f40b2e": {
+    "name": "demo-visitor",
+    "createdAt": "2026-07-20T20:42:13.265Z"
   }
 }

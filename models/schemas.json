@@ -21,5 +21,33 @@
         }
       }
     }
+  },
+  "dk_5877928a1d485d36688dc9c3a4f40b2e": {
+    "stripe": {
+      "version": 1,
+      "eventCount": 1,
+      "fields": {
+        "userId": {
+          "type": "string",
+          "required": false,
+          "seenCount": 1
+        },
+        "eventType": {
+          "type": "string",
+          "required": false,
+          "seenCount": 1
+        },
+        "amount": {
+          "type": "number",
+          "required": false,
+          "seenCount": 1
+        },
+        "currency": {
+          "type": "string",
+          "required": false,
+          "seenCount": 1
+        }
+      }
+    }
   }
 }
