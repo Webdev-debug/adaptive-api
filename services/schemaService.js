@@ -2,6 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const SCHEMA_PATH = path.join(__dirname, '..', 'models', 'schemas.json');
 const HISTORY_PATH = path.join(__dirname, '..', 'models', 'schemahistory.json');
+const BREAKING_PATH = path.join(__dirname, '..', 'models', 'breakingchanges.json');
 
 function loadAll() {
   const raw = fs.readFileSync(SCHEMA_PATH, 'utf-8');
@@ -21,6 +22,15 @@ function saveHistory(data) {
   fs.writeFileSync(HISTORY_PATH, JSON.stringify(data, null, 2));
 }
 
+function loadBreaking() {
+  const raw = fs.readFileSync(BREAKING_PATH, 'utf-8');
+  return JSON.parse(raw);
+}
+
+function saveBreaking(data) {
+  fs.writeFileSync(BREAKING_PATH, JSON.stringify(data, null, 2));
+}
+
 function recordHistory(apiKey, resource, version, addedFields) {
   const history = loadHistory();
   if (!history[apiKey]) history[apiKey] = {};
@@ -31,6 +41,25 @@ function recordHistory(apiKey, resource, version, addedFields) {
     timestamp: new Date().toISOString()
   });
   saveHistory(history);
+}
+
+function recordBreakingChange(apiKey, resource, field, expectedType, actualType) {
+  const breaking = loadBreaking();
+  if (!breaking[apiKey]) breaking[apiKey] = {};
+  if (!breaking[apiKey][resource]) breaking[apiKey][resource] = [];
+  breaking[apiKey][resource].push({
+    field,
+    expectedType,
+    actualType,
+    timestamp: new Date().toISOString()
+  });
+  saveBreaking(breaking);
+}
+
+function getBreakingChanges(apiKey, resource) {
+  const breaking = loadBreaking();
+  if (!breaking[apiKey]) return [];
+  return breaking[apiKey][resource] || [];
 }
 
 function getSchema(apiKey, resource) {
@@ -90,4 +119,4 @@ function trackOccurrence(apiKey, resource, presentFieldNames) {
   saveAll(all);
 }
 
-module.exports = { getSchema, getAllSchemas, getSchemaHistory, createSchema, updateSchema, trackOccurrence };
+module.exports = { getSchema, getAllSchemas, getSchemaHistory, createSchema, updateSchema, trackOccurrence, recordBreakingChange, getBreakingChanges };

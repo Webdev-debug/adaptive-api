@@ -49,5 +49,23 @@
         }
       }
     }
+  },
+  "dk_9c44b8786feaadc9aba1261d1b086bb7": {
+    "stripe": {
+      "version": 1,
+      "eventCount": 2,
+      "fields": {
+        "eventType": {
+          "type": "string",
+          "required": false,
+          "seenCount": 2
+        },
+        "amount": {
+          "type": "number",
+          "required": false,
+          "seenCount": 2
+        }
+      }
+    }
   }
 }

@@ -1,4 +1,4 @@
-const { getSchema, updateSchema, createSchema, trackOccurrence } = require('../services/schemaService');
+const { getSchema, updateSchema, createSchema, trackOccurrence, recordBreakingChange } = require('../services/schemaService');
 
 function validateAndAdapt(resource) {
   return (req, res, next) => {
@@ -17,6 +17,7 @@ function validateAndAdapt(resource) {
 
     const errors = [];
     const newFields = {};
+    const breakingChanges = [];
 
     for (const field in schema.fields) {
       const rule = schema.fields[field];
@@ -31,6 +32,7 @@ function validateAndAdapt(resource) {
         const actualType = typeof body[field];
         if (actualType !== expectedType) {
           errors.push(`Field ${field} expected ${expectedType}, got ${actualType}`);
+          breakingChanges.push({ field, expectedType, actualType });
         }
       } else {
         newFields[field] = { type: typeof body[field] };
@@ -38,7 +40,10 @@ function validateAndAdapt(resource) {
     }
 
     if (errors.length > 0) {
-      return res.status(400).json({ errors });
+      breakingChanges.forEach(bc => {
+        recordBreakingChange(apiKey, resource, bc.field, bc.expectedType, bc.actualType);
+      });
+      return res.status(400).json({ errors, breakingChangeDetected: breakingChanges.length > 0 });
     }
 
     if (Object.keys(newFields).length > 0) {

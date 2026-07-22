@@ -4,7 +4,7 @@ const validateAndAdapt = require('./middleware/validateAndAdapt');
 const trackUser = require('./middleware/trackUser');
 const requireApiKey = require('./middleware/requireApiKey');
 const { getEventsForUser } = require('./services/eventService');
-const { getSchema, getAllSchemas, getSchemaHistory } = require('./services/schemaService');
+const { getSchema, getAllSchemas, getSchemaHistory, getBreakingChanges } = require('./services/schemaService');
 const { generateApiKey } = require('./services/authService');
 const { setForwardUrl, getAllForwardUrls, forwardEvent } = require('./services/forwardService');
 
@@ -66,6 +66,11 @@ app.get('/schema/:resource', requireApiKey, (req, res) => {
 app.get('/schema/:resource/history', requireApiKey, (req, res) => {
   const history = getSchemaHistory(req.apiKey, req.params.resource);
   res.json({ resource: req.params.resource, history });
+});
+
+app.get('/breaking-changes/:resource', requireApiKey, (req, res) => {
+  const changes = getBreakingChanges(req.apiKey, req.params.resource);
+  res.json({ resource: req.params.resource, changes });
 });
 
 app.get('/sources', requireApiKey, (req, res) => {

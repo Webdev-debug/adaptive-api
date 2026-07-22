@@ -1,0 +1,12 @@
+{
+  "dk_9c44b8786feaadc9aba1261d1b086bb7": {
+    "stripe": [
+      {
+        "field": "amount",
+        "expectedType": "number",
+        "actualType": "string",
+        "timestamp": "2026-07-22T11:13:03.057Z"
+      }
+    ]
+  }
+}

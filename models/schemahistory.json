@@ -24,5 +24,17 @@
         "timestamp": "2026-07-20T20:42:16.952Z"
       }
     ]
+  },
+  "dk_9c44b8786feaadc9aba1261d1b086bb7": {
+    "stripe": [
+      {
+        "version": 1,
+        "addedFields": [
+          "eventType",
+          "amount"
+        ],
+        "timestamp": "2026-07-22T11:11:58.989Z"
+      }
+    ]
   }
 }

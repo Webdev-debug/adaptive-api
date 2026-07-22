@@ -1380,5 +1380,32 @@
       "currency": "USD"
     },
     "timestamp": "2026-07-20T20:42:16.936Z"
+  },
+  {
+    "userId": "anonymous",
+    "action": "POST /webhook/stripe",
+    "payload": {
+      "eventType": "payment.success",
+      "amount": 100
+    },
+    "timestamp": "2026-07-22T11:11:58.975Z"
+  },
+  {
+    "userId": "anonymous",
+    "action": "POST /webhook/stripe",
+    "payload": {
+      "eventType": "payment.success",
+      "amount": 100
+    },
+    "timestamp": "2026-07-22T11:12:38.360Z"
+  },
+  {
+    "userId": "anonymous",
+    "action": "POST /webhook/stripe",
+    "payload": {
+      "eventType": "payment.success",
+      "amount": "one hundred"
+    },
+    "timestamp": "2026-07-22T11:13:03.042Z"
   }
 ]
