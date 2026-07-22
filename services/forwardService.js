@@ -24,6 +24,11 @@ function getForwardUrl(apiKey, source) {
   return all[apiKey][source] || null;
 }
 
+function getAllForwardUrls(apiKey) {
+  const all = loadAll();
+  return all[apiKey] || {};
+}
+
 async function forwardEvent(apiKey, source, payload) {
   const url = getForwardUrl(apiKey, source);
   if (!url) {
@@ -46,4 +51,4 @@ async function forwardEvent(apiKey, source, payload) {
   }
 }
 
-module.exports = { setForwardUrl, getForwardUrl, forwardEvent };
+module.exports = { setForwardUrl, getForwardUrl, getAllForwardUrls, forwardEvent };

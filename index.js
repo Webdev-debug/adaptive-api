@@ -4,9 +4,9 @@ const validateAndAdapt = require('./middleware/validateAndAdapt');
 const trackUser = require('./middleware/trackUser');
 const requireApiKey = require('./middleware/requireApiKey');
 const { getEventsForUser } = require('./services/eventService');
-const { getSchema, getSchemaHistory } = require('./services/schemaService');
+const { getSchema, getAllSchemas, getSchemaHistory } = require('./services/schemaService');
 const { generateApiKey } = require('./services/authService');
-const { setForwardUrl, forwardEvent } = require('./services/forwardService');
+const { setForwardUrl, getAllForwardUrls, forwardEvent } = require('./services/forwardService');
 
 const app = express();
 app.use(express.json());
@@ -66,6 +66,19 @@ app.get('/schema/:resource', requireApiKey, (req, res) => {
 app.get('/schema/:resource/history', requireApiKey, (req, res) => {
   const history = getSchemaHistory(req.apiKey, req.params.resource);
   res.json({ resource: req.params.resource, history });
+});
+
+app.get('/sources', requireApiKey, (req, res) => {
+  const schemas = getAllSchemas(req.apiKey);
+  const forwards = getAllForwardUrls(req.apiKey);
+  const sources = Object.keys(schemas).map(name => ({
+    name,
+    version: schemas[name].version,
+    eventCount: schemas[name].eventCount || 0,
+    fields: schemas[name].fields,
+    forwardUrl: forwards[name] || null
+  }));
+  res.json({ sources });
 });
 
 app.listen(3000, () => console.log('Server running on http://localhost:3000'));

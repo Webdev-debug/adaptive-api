@@ -40,6 +40,11 @@ function getSchema(apiKey, resource) {
   return account[resource] || null;
 }
 
+function getAllSchemas(apiKey) {
+  const all = loadAll();
+  return all[apiKey] || {};
+}
+
 function getSchemaHistory(apiKey, resource) {
   const history = loadHistory();
   if (!history[apiKey]) return [];
@@ -85,4 +90,4 @@ function trackOccurrence(apiKey, resource, presentFieldNames) {
   saveAll(all);
 }
 
-module.exports = { getSchema, getSchemaHistory, createSchema, updateSchema, trackOccurrence };
+module.exports = { getSchema, getAllSchemas, getSchemaHistory, createSchema, updateSchema, trackOccurrence };
