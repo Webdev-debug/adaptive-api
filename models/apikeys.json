@@ -154,5 +154,25 @@
   "dk_5877928a1d485d36688dc9c3a4f40b2e": {
     "name": "demo-visitor",
     "createdAt": "2026-07-20T20:42:13.265Z"
+  },
+  "dk_a8f33bd5d6a6c97409bd9da9809bb337": {
+    "name": "ratetest",
+    "createdAt": "2026-07-22T10:42:19.607Z"
+  },
+  "dk_4ed2170a6576cf53b198b44a269da6d3": {
+    "name": "ratetest",
+    "createdAt": "2026-07-22T10:42:22.838Z"
+  },
+  "dk_cd1615aa5fbcc396851834356cee886e": {
+    "name": "ratetest",
+    "createdAt": "2026-07-22T10:42:25.460Z"
+  },
+  "dk_b41a09e29020ac6571373bec03d6a8bf": {
+    "name": "ratetest",
+    "createdAt": "2026-07-22T10:42:27.848Z"
+  },
+  "dk_7e5fe3cdd70547478d7fba1a1c2514e8": {
+    "name": "ratetest",
+    "createdAt": "2026-07-22T10:42:30.179Z"
   }
 }

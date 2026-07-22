@@ -1,4 +1,5 @@
 const express = require('express');
+const rateLimit = require('express-rate-limit');
 const validateAndAdapt = require('./middleware/validateAndAdapt');
 const trackUser = require('./middleware/trackUser');
 const requireApiKey = require('./middleware/requireApiKey');
@@ -11,7 +12,19 @@ const app = express();
 app.use(express.json());
 app.use(express.static('public'));
 
-app.post('/signup', (req, res) => {
+const signupLimiter = rateLimit({
+  windowMs: 60 * 60 * 1000,
+  max: 5,
+  message: { error: 'Too many signups from this IP. Try again later.' }
+});
+
+const webhookLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  max: 30,
+  message: { error: 'Too many requests. Slow down and try again in a minute.' }
+});
+
+app.post('/signup', signupLimiter, (req, res) => {
   const name = (req.body && req.body.name) || 'unnamed';
   const key = generateApiKey(name);
   res.json({ apiKey: key });
@@ -26,14 +39,14 @@ app.post('/configure/:source', requireApiKey, (req, res) => {
   res.json({ message: 'Forward URL saved', source: req.params.source, url });
 });
 
-app.post('/webhook/:source', requireApiKey, trackUser, (req, res, next) => {
+app.post('/webhook/:source', webhookLimiter, requireApiKey, trackUser, (req, res, next) => {
   validateAndAdapt(req.params.source)(req, res, next);
 }, async (req, res) => {
   const forwardResult = await forwardEvent(req.apiKey, req.params.source, req.body);
   res.json({ message: 'Event received', source: req.params.source, data: req.body, forward: forwardResult });
 });
 
-app.post('/orders', requireApiKey, trackUser, validateAndAdapt('createOrder'), (req, res) => {
+app.post('/orders', webhookLimiter, requireApiKey, trackUser, validateAndAdapt('createOrder'), (req, res) => {
   res.json({ message: 'Order received', data: req.body });
 });
 
