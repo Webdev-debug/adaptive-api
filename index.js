@@ -3,7 +3,7 @@ const rateLimit = require('express-rate-limit');
 const validateAndAdapt = require('./middleware/validateAndAdapt');
 const trackUser = require('./middleware/trackUser');
 const requireApiKey = require('./middleware/requireApiKey');
-const { getEventsForUser } = require('./services/eventService');
+const { getEventsForUser, getEventById } = require('./services/eventService');
 const { getSchema, getAllSchemas, getSchemaHistory, getBreakingChanges, toJsonSchema } = require('./services/schemaService');
 const { generateApiKey } = require('./services/authService');
 const { setForwardUrl, getAllForwardUrls, forwardEvent } = require('./services/forwardService');
@@ -79,6 +79,18 @@ app.get('/docs/:resource', requireApiKey, (req, res) => {
     return res.status(404).json({ error: 'Resource not found' });
   }
   res.json(toJsonSchema(schema));
+});
+
+app.post('/replay/:eventId', requireApiKey, async (req, res) => {
+  const event = getEventById(req.apiKey, req.params.eventId);
+  if (!event) {
+    return res.status(404).json({ error: 'Event not found' });
+  }
+  if (!event.source) {
+    return res.status(400).json({ error: 'This event has no associated source to replay against' });
+  }
+  const forwardResult = await forwardEvent(req.apiKey, event.source, event.payload);
+  res.json({ message: 'Event replayed', originalEventId: event.id, source: event.source, data: event.payload, forward: forwardResult });
 });
 
 app.get('/sources', requireApiKey, (req, res) => {
