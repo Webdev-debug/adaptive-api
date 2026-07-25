@@ -4,7 +4,7 @@ const validateAndAdapt = require('./middleware/validateAndAdapt');
 const trackUser = require('./middleware/trackUser');
 const requireApiKey = require('./middleware/requireApiKey');
 const { getEventsForUser } = require('./services/eventService');
-const { getSchema, getAllSchemas, getSchemaHistory, getBreakingChanges } = require('./services/schemaService');
+const { getSchema, getAllSchemas, getSchemaHistory, getBreakingChanges, toJsonSchema } = require('./services/schemaService');
 const { generateApiKey } = require('./services/authService');
 const { setForwardUrl, getAllForwardUrls, forwardEvent } = require('./services/forwardService');
 
@@ -71,6 +71,14 @@ app.get('/schema/:resource/history', requireApiKey, (req, res) => {
 app.get('/breaking-changes/:resource', requireApiKey, (req, res) => {
   const changes = getBreakingChanges(req.apiKey, req.params.resource);
   res.json({ resource: req.params.resource, changes });
+});
+
+app.get('/docs/:resource', requireApiKey, (req, res) => {
+  const schema = getSchema(req.apiKey, req.params.resource);
+  if (!schema) {
+    return res.status(404).json({ error: 'Resource not found' });
+  }
+  res.json(toJsonSchema(schema));
 });
 
 app.get('/sources', requireApiKey, (req, res) => {

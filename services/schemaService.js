@@ -62,6 +62,25 @@ function getBreakingChanges(apiKey, resource) {
   return breaking[apiKey][resource] || [];
 }
 
+
+function toJsonSchema(schema) {
+  const properties = {};
+  const required = [];
+  for (const name in schema.fields) {
+    const f = schema.fields[name];
+    properties[name] = { type: f.type === 'number' ? 'number' : f.type === 'boolean' ? 'boolean' : 'string' };
+    if (f.required) required.push(name);
+  }
+  return {
+    $schema: 'http://json-schema.org/draft-07/schema#',
+    type: 'object',
+    properties,
+    required,
+    'x-driftless-version': schema.version,
+    'x-driftless-eventsSeen': schema.eventCount || 0
+  };
+}
+
 function getSchema(apiKey, resource) {
   const all = loadAll();
   const account = all[apiKey];
@@ -119,4 +138,4 @@ function trackOccurrence(apiKey, resource, presentFieldNames) {
   saveAll(all);
 }
 
-module.exports = { getSchema, getAllSchemas, getSchemaHistory, createSchema, updateSchema, trackOccurrence, recordBreakingChange, getBreakingChanges };
+module.exports = { getSchema, getAllSchemas, getSchemaHistory, createSchema, updateSchema, trackOccurrence, recordBreakingChange, getBreakingChanges, toJsonSchema };
