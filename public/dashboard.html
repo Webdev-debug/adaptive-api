@@ -151,6 +151,7 @@ async function loadBreakingChanges(key, sourceName){
     const res = await fetchWithTimeout('/breaking-changes/' + sourceName, { headers:{'x-api-key':key} }, 8000);
     const data = await res.json();
     const box = document.getElementById('breaking-' + sourceName);
+    if(!data.changes || data.changes.length === 0){
       box.innerHTML = '<h4>Breaking Changes</h4><span class="breaking-none">None detected — this source has never sent unexpected data.</span>';
       return;
     }
