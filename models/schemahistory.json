@@ -36,5 +36,19 @@
         "timestamp": "2026-07-22T11:11:58.989Z"
       }
     ]
+  },
+  "dk_3a60057e1f94dff1b2442adfbf62f1c2": {
+    "stripe": [
+      {
+        "version": 1,
+        "addedFields": [
+          "userId",
+          "eventType",
+          "amount",
+          "currency"
+        ],
+        "timestamp": "2026-07-25T18:42:24.087Z"
+      }
+    ]
   }
 }

@@ -1407,5 +1407,16 @@
       "amount": "one hundred"
     },
     "timestamp": "2026-07-22T11:13:03.042Z"
+  },
+  {
+    "userId": "alice",
+    "action": "POST /webhook/stripe",
+    "payload": {
+      "userId": "alice",
+      "eventType": "payment.success",
+      "amount": 500,
+      "currency": "USD"
+    },
+    "timestamp": "2026-07-25T18:42:24.078Z"
   }
 ]
