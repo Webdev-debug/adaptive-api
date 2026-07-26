@@ -7,6 +7,7 @@ const { getEventsForUser, getEventById } = require('./services/eventService');
 const { getSchema, getAllSchemas, getSchemaHistory, getBreakingChanges, toJsonSchema } = require('./services/schemaService');
 const { generateApiKey } = require('./services/authService');
 const { setForwardUrl, getAllForwardUrls, forwardEvent } = require('./services/forwardService');
+const { setAlertUrl } = require('./services/alertService');
 
 const app = express();
 app.use(express.json());
@@ -91,6 +92,15 @@ app.post('/replay/:eventId', requireApiKey, async (req, res) => {
   }
   const forwardResult = await forwardEvent(req.apiKey, event.source, event.payload);
   res.json({ message: 'Event replayed', originalEventId: event.id, source: event.source, data: event.payload, forward: forwardResult });
+});
+
+app.post('/configure-alerts', requireApiKey, (req, res) => {
+  const url = req.body && req.body.url;
+  if (!url) {
+    return res.status(400).json({ error: 'Provide a url in the request body' });
+  }
+  setAlertUrl(req.apiKey, url);
+  res.json({ message: 'Alert URL saved', url });
 });
 
 app.get('/sources', requireApiKey, (req, res) => {

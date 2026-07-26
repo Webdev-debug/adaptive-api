@@ -68,4 +68,4 @@ Visit http://localhost:3000 for the live demo, or http://localhost:3000/dashboar
 
 ## License
 
-MIT
+All rights reserved. This code is publicly visible for portfolio and demonstration purposes. Reuse, modification, or redistribution is not permitted without explicit permission.

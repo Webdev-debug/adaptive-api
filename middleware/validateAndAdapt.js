@@ -1,4 +1,5 @@
 const { getSchema, updateSchema, createSchema, trackOccurrence, recordBreakingChange } = require('../services/schemaService');
+const { sendAlert } = require('../services/alertService');
 
 function validateAndAdapt(resource) {
   return (req, res, next) => {
@@ -42,6 +43,7 @@ function validateAndAdapt(resource) {
     if (errors.length > 0) {
       breakingChanges.forEach(bc => {
         recordBreakingChange(apiKey, resource, bc.field, bc.expectedType, bc.actualType);
+        sendAlert(apiKey, resource, bc.field, bc.expectedType, bc.actualType);
       });
       return res.status(400).json({ errors, breakingChangeDetected: breakingChanges.length > 0 });
     }
