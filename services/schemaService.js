@@ -1,5 +1,6 @@
 const fs = require('fs');
 const path = require('path');
+const { withLock } = require('../utils/fileLock');
 const SCHEMA_PATH = path.join(__dirname, '..', 'models', 'schemas.json');
 const HISTORY_PATH = path.join(__dirname, '..', 'models', 'schemahistory.json');
 const BREAKING_PATH = path.join(__dirname, '..', 'models', 'breakingchanges.json');
@@ -62,7 +63,6 @@ function getBreakingChanges(apiKey, resource) {
   return breaking[apiKey][resource] || [];
 }
 
-
 function toJsonSchema(schema) {
   const properties = {};
   const required = [];
@@ -100,42 +100,48 @@ function getSchemaHistory(apiKey, resource) {
 }
 
 function createSchema(apiKey, resource, fields) {
-  const all = loadAll();
-  if (!all[apiKey]) all[apiKey] = {};
-  const preparedFields = {};
-  for (const name in fields) {
-    preparedFields[name] = { type: fields[name].type, required: false, seenCount: 1 };
-  }
-  all[apiKey][resource] = { version: 1, eventCount: 1, fields: preparedFields };
-  saveAll(all);
-  recordHistory(apiKey, resource, 1, Object.keys(fields));
+  return withLock('schemas', () => {
+    const all = loadAll();
+    if (!all[apiKey]) all[apiKey] = {};
+    const preparedFields = {};
+    for (const name in fields) {
+      preparedFields[name] = { type: fields[name].type, required: false, seenCount: 1 };
+    }
+    all[apiKey][resource] = { version: 1, eventCount: 1, fields: preparedFields };
+    saveAll(all);
+    recordHistory(apiKey, resource, 1, Object.keys(fields));
+  });
 }
 
 function updateSchema(apiKey, resource, newFields) {
-  const all = loadAll();
-  const current = all[apiKey][resource];
-  current.version += 1;
-  for (const name in newFields) {
-    current.fields[name] = { type: newFields[name].type, required: false, seenCount: 0 };
-  }
-  all[apiKey][resource] = current;
-  saveAll(all);
-  recordHistory(apiKey, resource, current.version, Object.keys(newFields));
+  return withLock('schemas', () => {
+    const all = loadAll();
+    const current = all[apiKey][resource];
+    current.version += 1;
+    for (const name in newFields) {
+      current.fields[name] = { type: newFields[name].type, required: false, seenCount: 0 };
+    }
+    all[apiKey][resource] = current;
+    saveAll(all);
+    recordHistory(apiKey, resource, current.version, Object.keys(newFields));
+  });
 }
 
 function trackOccurrence(apiKey, resource, presentFieldNames) {
-  const all = loadAll();
-  const schema = all[apiKey][resource];
-  schema.eventCount = (schema.eventCount || 0) + 1;
-  for (const name in schema.fields) {
-    const field = schema.fields[name];
-    if (presentFieldNames.includes(name)) {
-      field.seenCount = (field.seenCount || 0) + 1;
+  return withLock('schemas', () => {
+    const all = loadAll();
+    const schema = all[apiKey][resource];
+    schema.eventCount = (schema.eventCount || 0) + 1;
+    for (const name in schema.fields) {
+      const field = schema.fields[name];
+      if (presentFieldNames.includes(name)) {
+        field.seenCount = (field.seenCount || 0) + 1;
+      }
+      field.required = schema.eventCount >= 3 && field.seenCount === schema.eventCount;
     }
-    field.required = schema.eventCount >= 3 && field.seenCount === schema.eventCount;
-  }
-  all[apiKey][resource] = schema;
-  saveAll(all);
+    all[apiKey][resource] = schema;
+    saveAll(all);
+  });
 }
 
 module.exports = { getSchema, getAllSchemas, getSchemaHistory, createSchema, updateSchema, trackOccurrence, recordBreakingChange, getBreakingChanges, toJsonSchema };
