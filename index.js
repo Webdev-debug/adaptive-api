@@ -4,7 +4,7 @@ const validateAndAdapt = require('./middleware/validateAndAdapt');
 const trackUser = require('./middleware/trackUser');
 const requireApiKey = require('./middleware/requireApiKey');
 const { getEventsForUser, getEventById } = require('./services/eventService');
-const { getSchema, getAllSchemas, getSchemaHistory, getBreakingChanges, toJsonSchema } = require('./services/schemaService');
+const { getSchema, getAllSchemas, getSchemaHistory, getBreakingChanges, getAnomalies, toJsonSchema } = require('./services/schemaService');
 const { generateApiKey } = require('./services/authService');
 const { setForwardUrl, getAllForwardUrls, forwardEvent } = require('./services/forwardService');
 const { setAlertUrl } = require('./services/alertService');
@@ -101,6 +101,11 @@ app.post('/configure-alerts', requireApiKey, (req, res) => {
   }
   setAlertUrl(req.apiKey, url);
   res.json({ message: 'Alert URL saved', url });
+});
+
+app.get('/anomalies/:resource', requireApiKey, (req, res) => {
+  const anomalies = getAnomalies(req.apiKey, req.params.resource);
+  res.json({ resource: req.params.resource, anomalies });
 });
 
 app.get('/sources', requireApiKey, (req, res) => {

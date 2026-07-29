@@ -1,4 +1,4 @@
-const { getSchema, updateSchema, createSchema, trackOccurrence, recordBreakingChange } = require('../services/schemaService');
+const { getSchema, updateSchema, createSchema, trackOccurrence, recordBreakingChange, recordAnomaly } = require('../services/schemaService');
 const { sendAlert } = require('../services/alertService');
 
 function validateAndAdapt(resource) {
@@ -10,7 +10,7 @@ function validateAndAdapt(resource) {
     if (!schema) {
       const initialFields = {};
       for (const field in body) {
-        initialFields[field] = { type: typeof body[field] };
+        initialFields[field] = { type: typeof body[field], value: body[field] };
       }
       createSchema(apiKey, resource, initialFields);
       return next();
@@ -36,7 +36,7 @@ function validateAndAdapt(resource) {
           breakingChanges.push({ field, expectedType, actualType });
         }
       } else {
-        newFields[field] = { type: typeof body[field] };
+        newFields[field] = { type: typeof body[field], value: body[field] };
       }
     }
 
@@ -52,8 +52,14 @@ function validateAndAdapt(resource) {
       updateSchema(apiKey, resource, newFields);
     }
 
-    trackOccurrence(apiKey, resource, Object.keys(body));
+    const anomalies = trackOccurrence(apiKey, resource, body);
+    if (anomalies && anomalies.length > 0) {
+      anomalies.forEach(a => {
+        recordAnomaly(apiKey, resource, a.field, a.value, a.expectedRange);
+      });
+    }
 
+    req.driftlessAnomalies = anomalies || [];
     next();
   };
 }
