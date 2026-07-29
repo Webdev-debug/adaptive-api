@@ -14,10 +14,11 @@ function saveKeys(keys) {
 
 function generateApiKey(name) {
   const key = 'dk_' + crypto.randomBytes(16).toString('hex');
+  const secret = 'wsec_' + crypto.randomBytes(24).toString('hex');
   const keys = loadKeys();
-  keys[key] = { name: name || 'unnamed', createdAt: new Date().toISOString() };
+  keys[key] = { name: name || 'unnamed', secret, createdAt: new Date().toISOString() };
   saveKeys(keys);
-  return key;
+  return { key, secret };
 }
 
 function isValidApiKey(key) {
@@ -25,4 +26,10 @@ function isValidApiKey(key) {
   return Boolean(keys[key]);
 }
 
-module.exports = { generateApiKey, isValidApiKey };
+function getSigningSecret(apiKey) {
+  const keys = loadKeys();
+  const account = keys[apiKey];
+  return account ? account.secret : null;
+}
+
+module.exports = { generateApiKey, isValidApiKey, getSigningSecret };

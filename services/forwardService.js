@@ -1,5 +1,7 @@
 const fs = require('fs');
 const path = require('path');
+const crypto = require('crypto');
+const { getSigningSecret } = require('./authService');
 const FORWARDS_PATH = path.join(__dirname, '..', 'models', 'forwards.json');
 
 function loadAll() {
@@ -29,22 +31,33 @@ function getAllForwardUrls(apiKey) {
   return all[apiKey] || {};
 }
 
+function signPayload(secret, payload) {
+  const body = JSON.stringify(payload);
+  return crypto.createHmac('sha256', secret).update(body).digest('hex');
+}
+
 async function forwardEvent(apiKey, source, payload) {
   const url = getForwardUrl(apiKey, source);
   if (!url) {
     return { forwarded: false, reason: 'no forward URL configured' };
   }
+  const secret = getSigningSecret(apiKey);
+  const signature = secret ? signPayload(secret, payload) : null;
+
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), 5000);
   try {
     const res = await fetch(url, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'x-driftless-signature': signature || ''
+      },
       body: JSON.stringify(payload),
       signal: controller.signal
     });
     clearTimeout(timer);
-    return { forwarded: true, status: res.status };
+    return { forwarded: true, status: res.status, signed: Boolean(signature) };
   } catch (e) {
     clearTimeout(timer);
     return { forwarded: false, reason: e.message };

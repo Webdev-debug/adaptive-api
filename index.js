@@ -27,8 +27,8 @@ const webhookLimiter = rateLimit({
 
 app.post('/signup', signupLimiter, (req, res) => {
   const name = (req.body && req.body.name) || 'unnamed';
-  const key = generateApiKey(name);
-  res.json({ apiKey: key });
+  const { key, secret } = generateApiKey(name);
+  res.json({ apiKey: key, signingSecret: secret });
 });
 
 app.post('/configure/:source', requireApiKey, (req, res) => {
