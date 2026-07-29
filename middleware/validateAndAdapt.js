@@ -2,7 +2,7 @@ const { getSchema, updateSchema, createSchema, trackOccurrence, recordBreakingCh
 const { sendAlert } = require('../services/alertService');
 
 function validateAndAdapt(resource) {
-  return (req, res, next) => {
+  return async (req, res, next) => {
     const apiKey = req.apiKey;
     let schema = getSchema(apiKey, resource);
     const body = req.body || {};
@@ -52,7 +52,7 @@ function validateAndAdapt(resource) {
       updateSchema(apiKey, resource, newFields);
     }
 
-    const anomalies = trackOccurrence(apiKey, resource, body);
+    const anomalies = await trackOccurrence(apiKey, resource, body);
     if (anomalies && anomalies.length > 0) {
       anomalies.forEach(a => {
         recordAnomaly(apiKey, resource, a.field, a.value, a.expectedRange);
