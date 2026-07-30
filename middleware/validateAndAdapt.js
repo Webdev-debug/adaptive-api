@@ -1,11 +1,14 @@
 const { getSchema, updateSchema, createSchema, trackOccurrence, recordBreakingChange, recordAnomaly } = require('../services/schemaService');
 const { sendAlert } = require('../services/alertService');
+const { detectPII } = require('../utils/piiDetector');
 
 function validateAndAdapt(resource) {
   return async (req, res, next) => {
     const apiKey = req.apiKey;
     let schema = getSchema(apiKey, resource);
     const body = req.body || {};
+
+    req.driftlessPII = detectPII(body);
 
     if (!schema) {
       const initialFields = {};
