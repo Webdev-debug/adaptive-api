@@ -1,5 +1,7 @@
 # Driftless
 
+**Built by Crypts**
+
 **Self-adapting webhook infrastructure that learns your data before it breaks.**
 
 Driftless is a webhook ingestion and forwarding platform that automatically resolves the schema of incoming data — validating, versioning, and relaying every event without manual configuration, even as upstream providers change their payload formats.
