@@ -7,6 +7,7 @@ const { getEventsForUser, getEventById } = require('./services/eventService');
 const { getSchema, getAllSchemas, getSchemaHistory, getBreakingChanges, getAnomalies, toJsonSchema } = require('./services/schemaService');
 const { generateApiKey } = require('./services/authService');
 const { setForwardUrl, getAllForwardUrls, forwardEvent } = require('./services/forwardService');
+const { processQueue, getQueueStatus } = require('./services/retryService');
 const { setAlertUrl } = require('./services/alertService');
 
 const app = express();
@@ -119,6 +120,15 @@ app.get('/sources', requireApiKey, (req, res) => {
     forwardUrl: forwards[name] || null
   }));
   res.json({ sources });
+});
+
+setInterval(() => {
+  processQueue().catch(() => {});
+}, 10000);
+
+app.get('/retry-queue', requireApiKey, (req, res) => {
+  const items = getQueueStatus(req.apiKey);
+  res.json({ items });
 });
 
 app.listen(3000, () => console.log('Server running on http://localhost:3000'));

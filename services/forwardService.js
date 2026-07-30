@@ -2,6 +2,7 @@ const fs = require('fs');
 const path = require('path');
 const crypto = require('crypto');
 const { getSigningSecret } = require('./authService');
+const { enqueueRetry } = require('./retryService');
 const FORWARDS_PATH = path.join(__dirname, '..', 'models', 'forwards.json');
 
 function loadAll() {
@@ -60,7 +61,8 @@ async function forwardEvent(apiKey, source, payload) {
     return { forwarded: true, status: res.status, signed: Boolean(signature) };
   } catch (e) {
     clearTimeout(timer);
-    return { forwarded: false, reason: e.message };
+    await enqueueRetry(apiKey, source, url, payload);
+    return { forwarded: false, reason: e.message, queuedForRetry: true };
   }
 }
 
