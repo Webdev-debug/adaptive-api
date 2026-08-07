@@ -7,6 +7,7 @@ const { getEventsForUser, getEventById } = require('./services/eventService');
 const { getSchema, getAllSchemas, getSchemaHistory, getBreakingChanges, getAnomalies, toJsonSchema } = require('./services/schemaService');
 const { generateApiKey } = require('./services/authService');
 const { setForwardUrl, getAllForwardUrls, forwardEvent } = require('./services/forwardService');
+const { checkAndRecord } = require('./services/dedupService');
 const { processQueue, getQueueStatus } = require('./services/retryService');
 const { setAlertUrl } = require('./services/alertService');
 
@@ -41,7 +42,13 @@ app.post('/configure/:source', requireApiKey, (req, res) => {
   res.json({ message: 'Forward URL saved', source: req.params.source, url });
 });
 
-app.post('/webhook/:source', webhookLimiter, requireApiKey, trackUser, (req, res, next) => {
+app.post('/webhook/:source', webhookLimiter, requireApiKey, (req, res, next) => {
+  const dedupResult = checkAndRecord(req.apiKey, req.params.source, req.body);
+  if (dedupResult.isDuplicate) {
+    return res.status(200).json({ message: 'Duplicate event ignored', isDuplicate: true, firstSeenAt: dedupResult.firstSeenAt });
+  }
+  next();
+}, trackUser, (req, res, next) => {
   validateAndAdapt(req.params.source)(req, res, next);
 }, async (req, res) => {
   const forwardResult = await forwardEvent(req.apiKey, req.params.source, req.body);
