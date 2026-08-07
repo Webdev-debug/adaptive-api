@@ -26,4 +26,26 @@ function detectPII(body) {
   return findings;
 }
 
-module.exports = { detectPII };
+function maskValue(value, type) {
+  if (type === 'email') {
+    const [user, domain] = value.split('@');
+    return user.slice(0, 2) + '***@' + domain;
+  }
+  if (type === 'phone') {
+    return value.slice(0, 4) + '****' + value.slice(-2);
+  }
+  if (type === 'card_number') {
+    return '**** **** **** ' + value.slice(-4);
+  }
+  return '***';
+}
+
+function redactPII(body, findings) {
+  const redacted = Object.assign({}, body);
+  findings.forEach(f => {
+    redacted[f.field] = maskValue(String(body[f.field]), f.type);
+  });
+  return redacted;
+}
+
+module.exports = { detectPII, redactPII };

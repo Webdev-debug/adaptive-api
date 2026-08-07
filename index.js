@@ -8,6 +8,7 @@ const { getSchema, getAllSchemas, getSchemaHistory, getBreakingChanges, getAnoma
 const { generateApiKey } = require('./services/authService');
 const { setForwardUrl, getAllForwardUrls, forwardEvent } = require('./services/forwardService');
 const { checkAndRecord } = require('./services/dedupService');
+const { redactPII } = require('./utils/piiDetector');
 const { processQueue, getQueueStatus } = require('./services/retryService');
 const { setAlertUrl } = require('./services/alertService');
 
@@ -51,8 +52,10 @@ app.post('/webhook/:source', webhookLimiter, requireApiKey, (req, res, next) => 
 }, trackUser, (req, res, next) => {
   validateAndAdapt(req.params.source)(req, res, next);
 }, async (req, res) => {
-  const forwardResult = await forwardEvent(req.apiKey, req.params.source, req.body);
-  res.json({ message: 'Event received', eventId: req.driftlessEventId, source: req.params.source, data: req.body, forward: forwardResult, anomalies: req.driftlessAnomalies || [], piiDetected: req.driftlessPII || [], coercions: req.driftlessCoercions || [] });
+  const piiFindings = req.driftlessPII || [];
+  const payloadToForward = piiFindings.length > 0 ? redactPII(req.body, piiFindings) : req.body;
+  const forwardResult = await forwardEvent(req.apiKey, req.params.source, payloadToForward);
+  res.json({ message: 'Event received', eventId: req.driftlessEventId, source: req.params.source, data: req.body, forward: forwardResult, anomalies: req.driftlessAnomalies || [], piiDetected: piiFindings, coercions: req.driftlessCoercions || [] });
 });
 
 app.post('/orders', webhookLimiter, requireApiKey, trackUser, validateAndAdapt('createOrder'), (req, res) => {
