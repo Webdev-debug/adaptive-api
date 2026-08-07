@@ -52,7 +52,7 @@ app.post('/webhook/:source', webhookLimiter, requireApiKey, (req, res, next) => 
   validateAndAdapt(req.params.source)(req, res, next);
 }, async (req, res) => {
   const forwardResult = await forwardEvent(req.apiKey, req.params.source, req.body);
-  res.json({ message: 'Event received', eventId: req.driftlessEventId, source: req.params.source, data: req.body, forward: forwardResult, anomalies: req.driftlessAnomalies || [], piiDetected: req.driftlessPII || [] });
+  res.json({ message: 'Event received', eventId: req.driftlessEventId, source: req.params.source, data: req.body, forward: forwardResult, anomalies: req.driftlessAnomalies || [], piiDetected: req.driftlessPII || [], coercions: req.driftlessCoercions || [] });
 });
 
 app.post('/orders', webhookLimiter, requireApiKey, trackUser, validateAndAdapt('createOrder'), (req, res) => {
