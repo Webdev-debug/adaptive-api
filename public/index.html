@@ -236,6 +236,8 @@ footer a{color:var(--accent);}
       <button class="action" id="btn-send" onclick="sendEvent()" disabled>→ Send event to current source</button>
       <button class="action" id="btn-newfield" onclick="sendEventNewField()" disabled>→ Send event with unseen field</button>
       <button class="action" id="btn-history" onclick="getHistory()" disabled>→ Get alice's history</button>
+      <button class="action" id="btn-duplicate" onclick="sendDuplicate()" disabled>→ Send same event twice (test dedup)</button>
+      <button class="action" id="btn-pii" onclick="sendPII()" disabled>→ Send event with email/phone (test redaction)</button>
     </div>
   </div>
 </div>
@@ -281,7 +283,7 @@ const keywarn = document.getElementById('keywarn');
 const forwardStatus = document.getElementById('forward-status');
 const btnSaveForward = document.getElementById('btn-save-forward');
 const timelineList = document.getElementById('timeline-list');
-const allButtons = ['btn-send','btn-newfield','btn-history'].map(id => document.getElementById(id));
+const allButtons = ['btn-send','btn-newfield','btn-history','btn-duplicate','btn-pii'].map(id => document.getElementById(id));
 
 const sampleData = {
   stripe: { eventType:'payment.success', amount:500, currency:'USD' },
@@ -483,6 +485,16 @@ function sendEventNewField(){
 }
 function getHistory(){
   get('/history/alice');
+}
+
+function sendDuplicate(){
+  const fixedPayload = { userId:'alice', orderId:'DUPLICATE-TEST-001', amount:99 };
+  post('/webhook/' + currentSource, fixedPayload);
+}
+
+function sendPII(){
+  const withPII = Object.assign({ userId:'alice' }, sampleData[currentSource], { email:'johndoe@example.com', phone:'+2348012345678' });
+  post('/webhook/' + currentSource, withPII);
 }
 </script>
 </body>
