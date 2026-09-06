@@ -14,15 +14,19 @@ header .logo span{color:#4FC3F7;}
 header .icons{display:flex;gap:16px;align-items:center;}
 header a{color:#7FA3D9;text-decoration:none;font-size:13px;}
 .cart-count{background:#4FC3F7;color:#001018;border-radius:10px;font-size:10px;padding:1px 6px;margin-left:4px;}
-.hero{padding:40px 20px;text-align:center;background:linear-gradient(180deg,#0A1A3D,#0F172A);color:#fff;}
-.hero h1{font-size:26px;margin-bottom:8px;}
-.hero p{color:#93ACD6;font-size:14px;}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;padding:20px;}
+.hero{padding:32px 20px;text-align:center;background:linear-gradient(180deg,#0A1A3D,#0F172A);color:#fff;}
+.hero h1{font-size:24px;margin-bottom:6px;}
+.hero p{color:#93ACD6;font-size:13px;}
+.tabs{display:flex;gap:8px;padding:14px 20px 0;overflow-x:auto;}
+.tab{white-space:nowrap;padding:7px 14px;border-radius:20px;background:#fff;border:1px solid #ddd;font-size:12px;cursor:pointer;color:#555;}
+.tab.active{background:#0A1A3D;color:#fff;border-color:#0A1A3D;}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;padding:16px 20px;}
 .card{background:#fff;border-radius:10px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,0.08);text-decoration:none;color:inherit;}
-.card img{width:100%;height:130px;object-fit:cover;display:block;background:#E8ECF3;}
+.card img{width:100%;height:140px;object-fit:cover;display:block;background:#E8ECF3;}
 .card .info{padding:10px;}
 .card h3{font-size:13px;margin-bottom:4px;}
 .card .price{font-weight:700;font-size:14px;color:#0A1A3D;}
+.card .rating{font-size:11px;color:#F59E0B;margin-top:2px;}
 footer{text-align:center;padding:20px;font-size:12px;color:#888;}
 </style>
 </head>
@@ -40,35 +44,66 @@ footer{text-align:center;padding:20px;font-size:12px;color:#888;}
   <p>A demo storefront showing Driftless working behind the scenes</p>
 </div>
 
+<div class="tabs" id="tabs"></div>
 <div class="grid" id="product-grid"></div>
 
 <footer>Demo store — no real payments. Powered by <a href="/" style="color:#4FC3F7;">Driftless</a>.</footer>
 
 <script>
 const products = [
-  { id:1, name:'Wireless Headphones', price:49.99, color:'4FC3F7' },
-  { id:2, name:'Smart Watch', price:89.99, color:'A855F7' },
-  { id:3, name:'Running Shoes', price:64.50, color:'EC4899' },
-  { id:4, name:'Backpack', price:34.00, color:'3B82F6' },
-  { id:5, name:'Sunglasses', price:22.99, color:'FFD166' },
-  { id:6, name:'Coffee Maker', price:75.00, color:'6EE7B7' }
+  { id:1, name:'Wireless Headphones', price:49.99, category:'Electronics', rating:4.5 },
+  { id:2, name:'Smart Watch', price:89.99, category:'Electronics', rating:4.2 },
+  { id:3, name:'Bluetooth Speaker', price:38.50, category:'Electronics', rating:4.6 },
+  { id:4, name:'Phone Stand', price:12.99, category:'Electronics', rating:4.0 },
+  { id:5, name:'Running Shoes', price:64.50, category:'Fashion', rating:4.7 },
+  { id:6, name:'Sunglasses', price:22.99, category:'Fashion', rating:4.3 },
+  { id:7, name:'Leather Wallet', price:29.00, category:'Fashion', rating:4.4 },
+  { id:8, name:'Denim Jacket', price:54.00, category:'Fashion', rating:4.1 },
+  { id:9, name:'Coffee Maker', price:75.00, category:'Home', rating:4.5 },
+  { id:10, name:'Desk Lamp', price:19.99, category:'Home', rating:4.2 },
+  { id:11, name:'Throw Pillow Set', price:24.00, category:'Home', rating:4.6 },
+  { id:12, name:'Backpack', price:34.00, category:'Accessories', rating:4.8 }
 ];
+
+const categories = ['All', 'Electronics', 'Fashion', 'Home', 'Accessories'];
+let activeCategory = 'All';
+
+function imgFor(p){
+  return 'https://picsum.photos/seed/novastore' + p.id + '/300/240';
+}
+
+function renderTabs(){
+  const tabs = document.getElementById('tabs');
+  tabs.innerHTML = '';
+  categories.forEach(cat => {
+    const el = document.createElement('div');
+    el.className = 'tab' + (cat === activeCategory ? ' active' : '');
+    el.textContent = cat;
+    el.onclick = () => { activeCategory = cat; renderTabs(); renderGrid(); };
+    tabs.appendChild(el);
+  });
+}
+
+function renderGrid(){
+  const grid = document.getElementById('product-grid');
+  grid.innerHTML = '';
+  const filtered = activeCategory === 'All' ? products : products.filter(p => p.category === activeCategory);
+  filtered.forEach(p => {
+    const a = document.createElement('a');
+    a.className = 'card';
+    a.href = 'shop-product.html?id=' + p.id;
+    a.innerHTML = '<img src="' + imgFor(p) + '" alt="' + p.name + '"><div class="info"><h3>' + p.name + '</h3><div class="price">$' + p.price.toFixed(2) + '</div><div class="rating">★ ' + p.rating + '</div></div>';
+    grid.appendChild(a);
+  });
+}
 
 function updateCartCount(){
   const cart = JSON.parse(localStorage.getItem('novaCart') || '[]');
   document.getElementById('cart-count').textContent = cart.length;
 }
 
-const grid = document.getElementById('product-grid');
-products.forEach(p => {
-  const a = document.createElement('a');
-  a.className = 'card';
-  a.href = 'shop-product.html?id=' + p.id;
-  const imgUrl = 'https://placehold.co/300x260/' + p.color + '/ffffff?text=' + encodeURIComponent(p.name.replace(/ /g,'+'));
-  a.innerHTML = '<img src="' + imgUrl + '" alt="' + p.name + '"><div class="info"><h3>' + p.name + '</h3><div class="price">$' + p.price.toFixed(2) + '</div></div>';
-  grid.appendChild(a);
-});
-
+renderTabs();
+renderGrid();
 updateCartCount();
 </script>
 </body>
