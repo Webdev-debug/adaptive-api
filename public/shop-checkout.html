@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Checkout — Nova Store</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Inter',sans-serif;background:#F7F8FA;color:#0F172A;}
+header{background:#0A1A3D;color:#fff;padding:16px 20px;}
+header .logo{font-weight:700;font-size:18px;}
+header .logo span{color:#4FC3F7;}
+.wrap{max-width:480px;margin:0 auto;padding:20px;}
+h2{font-size:16px;margin:20px 0 10px;}
+.field{margin-bottom:12px;}
+.field label{font-size:12px;color:#666;display:block;margin-bottom:4px;}
+.field input{width:100%;padding:10px;border:1px solid #ddd;border-radius:8px;font-size:13px;}
+.row2{display:flex;gap:10px;}
+.summary{background:#fff;border-radius:10px;padding:16px;margin-top:20px;}
+.summary .row{display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px;}
+.summary .total{font-weight:700;font-size:15px;border-top:1px solid #eee;padding-top:8px;margin-top:8px;}
+.pay-btn{width:100%;padding:16px;background:#0A1A3D;color:#fff;border:none;border-radius:8px;font-weight:600;font-size:15px;cursor:pointer;margin-top:20px;}
+.pay-btn:disabled{opacity:0.6;}
+.status{margin-top:16px;font-size:13px;color:#555;line-height:1.6;}
+.status .step{padding:6px 0;}
+.status .step.done{color:#16A34A;}
+pre{background:#0A1A3D;color:#4FC3F7;padding:12px;border-radius:8px;font-size:11px;overflow-x:auto;margin-top:12px;white-space:pre-wrap;}
+.badge{font-size:11px;color:#888;text-align:center;margin-bottom:10px;}
+</style>
+</head>
+<body>
+<header><div class="logo">NOVA<span>STORE</span></div></header>
+
+<div class="wrap">
+  <div class="badge">Demo checkout — no real card is charged</div>
+
+  <h2>Shipping details</h2>
+  <div class="field"><label>Full name</label><input id="name" placeholder="Jane Doe" value="Jane Doe"></div>
+  <div class="field"><label>Email</label><input id="email" placeholder="jane@example.com" value="jane@example.com"></div>
+  <div class="row2">
+    <div class="field"><label>City</label><input id="city" placeholder="Lagos" value="Lagos"></div>
+    <div class="field"><label>Phone</label><input id="phone" placeholder="+234..." value="+2348012345678"></div>
+  </div>
+
+  <h2>Payment</h2>
+  <div class="field"><label>Card number</label><input value="4242 4242 4242 4242" disabled></div>
+
+  <div class="summary" id="summary"></div>
+
+  <button class="pay-btn" id="payBtn" onclick="pay()">Pay Now</button>
+
+  <div class="status" id="status"></div>
+</div>
+
+<script>
+function loadCart(){
+  return JSON.parse(localStorage.getItem('novaCart') || '[]');
+}
+
+function renderSummary(){
+  const cart = loadCart();
+  let subtotal = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
+  const shipping = cart.length > 0 ? 4.99 : 0;
+  const total = subtotal + shipping;
+  document.getElementById('summary').innerHTML = `
+    <div class="row"><span>${cart.length} item(s)</span><span>$${subtotal.toFixed(2)}</span></div>
+    <div class="row"><span>Shipping</span><span>$${shipping.toFixed(2)}</span></div>
+    <div class="row total"><span>Total</span><span>$${total.toFixed(2)}</span></div>
+  `;
+  return total;
+}
+
+let apiKey = null;
+async function ensureKey(){
+  const stored = localStorage.getItem('novaApiKey');
+  if(stored) { apiKey = stored; return apiKey; }
+  const res = await fetch('/signup', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ name:'nova-store' }) });
+  const data = await res.json();
+  apiKey = data.apiKey;
+  localStorage.setItem('novaApiKey', apiKey);
+  return apiKey;
+}
+
+async function pay(){
+  const btn = document.getElementById('payBtn');
+  const status = document.getElementById('status');
+  btn.disabled = true;
+  btn.textContent = 'Processing...';
+
+  const total = renderSummary();
+  const cart = loadCart();
+  const order = {
+    userId: document.getElementById('email').value,
+    orderId: 'NOVA-' + Date.now(),
+    customerName: document.getElementById('name').value,
+    email: document.getElementById('email').value,
+    phone: document.getElementById('phone').value,
+    city: document.getElementById('city').value,
+    items: cart.map(i => i.name).join(', '),
+    amount: Number(total.toFixed(2)),
+    currency: 'USD'
+  };
+
+  status.innerHTML = '<div class="step">1. Payment processed (simulated)...</div>';
+  await new Promise(r => setTimeout(r, 700));
+
+  const key = await ensureKey();
+  status.innerHTML += '<div class="step done">✓ Payment processed</div><div class="step">2. Sending order to Driftless...</div>';
+  await new Promise(r => setTimeout(r, 600));
+
+  const res = await fetch('/webhook/novastore-orders', {
+    method:'POST',
+    headers:{'Content-Type':'application/json','x-api-key':key},
+    body: JSON.stringify(order)
+  });
+  const result = await res.json();
+
+  status.innerHTML += '<div class="step done">✓ Order sent and validated</div><div class="step">3. Driftless checked for issues and logged the order</div>';
+  await new Promise(r => setTimeout(r, 500));
+  status.innerHTML += '<div class="step done">✓ Complete</div>';
+  status.innerHTML += '<pre>' + JSON.stringify(result, null, 2) + '</pre>';
+
+  localStorage.removeItem('novaCart');
+  btn.textContent = 'Order Placed ✓';
+}
+
+renderSummary();
+</script>
+</body>
+</html>

@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Product — Nova Store</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Inter',sans-serif;background:#F7F8FA;color:#0F172A;}
+header{background:#0A1A3D;color:#fff;padding:16px 20px;display:flex;justify-content:space-between;align-items:center;}
+header .logo{font-weight:700;font-size:18px;}
+header .logo span{color:#4FC3F7;}
+header a{color:#7FA3D9;text-decoration:none;font-size:13px;}
+.wrap{max-width:480px;margin:0 auto;padding:20px;}
+.wrap img{width:100%;border-radius:12px;margin-bottom:16px;}
+h1{font-size:20px;margin-bottom:8px;}
+.price{font-size:24px;font-weight:700;color:#0A1A3D;margin-bottom:16px;}
+.desc{font-size:13px;color:#555;line-height:1.6;margin-bottom:20px;}
+.qty{display:flex;align-items:center;gap:12px;margin-bottom:20px;}
+.qty button{width:32px;height:32px;border:1px solid #ddd;background:#fff;border-radius:6px;font-size:16px;cursor:pointer;}
+.qty span{font-size:15px;font-weight:600;}
+.actions{display:flex;gap:10px;}
+button.main{flex:1;padding:14px;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;}
+.add{background:#0A1A3D;color:#fff;}
+.buy{background:#4FC3F7;color:#001018;}
+.toast{position:fixed;bottom:20px;left:20px;right:20px;background:#0A1A3D;color:#fff;padding:14px;border-radius:8px;text-align:center;font-size:13px;display:none;}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">NOVA<span>STORE</span></div>
+  <a href="shop.html">← Back to store</a>
+</header>
+
+<div class="wrap" id="content"></div>
+<div class="toast" id="toast"></div>
+
+<script>
+const products = [
+  { id:1, name:'Wireless Headphones', price:49.99, color:'4FC3F7', desc:'Crisp sound, 30-hour battery life, and a snug fit built for all-day listening.' },
+  { id:2, name:'Smart Watch', price:89.99, color:'A855F7', desc:'Track your steps, heart rate, and sleep — synced straight to your phone.' },
+  { id:3, name:'Running Shoes', price:64.50, color:'EC4899', desc:'Lightweight cushioning designed for daily runs and long-distance comfort.' },
+  { id:4, name:'Backpack', price:34.00, color:'3B82F6', desc:'Water-resistant, padded laptop sleeve, and room for everything else.' },
+  { id:5, name:'Sunglasses', price:22.99, color:'FFD166', desc:'UV-protected lenses with a classic frame that goes with everything.' },
+  { id:6, name:'Coffee Maker', price:75.00, color:'6EE7B7', desc:'Brews a full pot in under 6 minutes, with a built-in warmer plate.' }
+];
+
+const params = new URLSearchParams(window.location.search);
+const id = parseInt(params.get('id'));
+const product = products.find(p => p.id === id) || products[0];
+
+let qty = 1;
+
+function render(){
+  const imgUrl = 'https://placehold.co/500x400/' + product.color + '/ffffff?text=' + encodeURIComponent(product.name.replace(/ /g,'+'));
+  document.getElementById('content').innerHTML = `
+    <img src="${imgUrl}" alt="${product.name}">
+    <h1>${product.name}</h1>
+    <div class="price">$${product.price.toFixed(2)}</div>
+    <div class="desc">${product.desc}</div>
+    <div class="qty">
+      <button onclick="changeQty(-1)">-</button>
+      <span id="qtyLabel">${qty}</span>
+      <button onclick="changeQty(1)">+</button>
+    </div>
+    <div class="actions">
+      <button class="main add" onclick="addToCart()">Add to Cart</button>
+      <button class="main buy" onclick="buyNow()">Buy Now</button>
+    </div>
+  `;
+}
+
+function changeQty(delta){
+  qty = Math.max(1, qty + delta);
+  document.getElementById('qtyLabel').textContent = qty;
+}
+
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.style.display = 'block';
+  setTimeout(() => t.style.display = 'none', 1800);
+}
+
+function addToCart(){
+  const cart = JSON.parse(localStorage.getItem('novaCart') || '[]');
+  cart.push({ id: product.id, name: product.name, price: product.price, color: product.color, qty });
+  localStorage.setItem('novaCart', JSON.stringify(cart));
+  showToast('Added ' + qty + ' × ' + product.name + ' to cart');
+}
+
+function buyNow(){
+  const cart = [{ id: product.id, name: product.name, price: product.price, color: product.color, qty }];
+  localStorage.setItem('novaCart', JSON.stringify(cart));
+  window.location.href = 'shop-checkout.html';
+}
+
+render();
+</script>
+</body>
+</html>

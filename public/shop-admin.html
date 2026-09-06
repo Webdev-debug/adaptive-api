@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin — Nova Store</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Inter',sans-serif;background:#0A1A3D;color:#EAF2FF;}
+header{padding:16px 20px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid #1F3A66;}
+header .logo{font-weight:700;font-size:18px;}
+header .logo span{color:#4FC3F7;}
+header a{color:#7FA3D9;text-decoration:none;font-size:13px;}
+.wrap{max-width:600px;margin:0 auto;padding:20px;}
+h2{font-size:16px;margin:20px 0 10px;}
+.stat-row{display:flex;gap:10px;margin-bottom:20px;}
+.stat{flex:1;background:#0C1B38;border:1px solid #1F3A66;border-radius:10px;padding:14px;text-align:center;}
+.stat .num{font-size:22px;font-weight:700;color:#4FC3F7;}
+.stat .label{font-size:11px;color:#7FA3D9;margin-top:4px;}
+.order{background:#0C1B38;border:1px solid #1F3A66;border-radius:10px;padding:14px;margin-bottom:10px;font-family:'JetBrains Mono',monospace;font-size:12px;}
+.order .id{color:#4FC3F7;font-weight:600;}
+.order .row{display:flex;justify-content:space-between;color:#7FA3D9;margin-top:4px;}
+.empty{text-align:center;color:#7FA3D9;font-size:13px;padding:40px 0;}
+.refresh{background:transparent;border:1px solid #1F3A66;color:#EAF2FF;padding:8px 14px;border-radius:6px;font-size:12px;cursor:pointer;margin-bottom:16px;}
+.refresh:hover{border-color:#4FC3F7;color:#4FC3F7;}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">NOVA<span>STORE</span> — Admin</div>
+  <a href="shop.html">← Back to store</a>
+</header>
+
+<div class="wrap">
+  <button class="refresh" onclick="loadOrders()">↻ Refresh orders</button>
+
+  <div class="stat-row">
+    <div class="stat"><div class="num" id="stat-count">0</div><div class="label">Orders received</div></div>
+    <div class="stat"><div class="num" id="stat-revenue">$0</div><div class="label">Total revenue</div></div>
+    <div class="stat"><div class="num" id="stat-version">v0</div><div class="label">Schema version</div></div>
+  </div>
+
+  <h2>Recent orders</h2>
+  <div id="orders-list"><div class="empty">Loading...</div></div>
+</div>
+
+<script>
+async function loadOrders(){
+  const apiKey = localStorage.getItem('novaApiKey');
+  const list = document.getElementById('orders-list');
+
+  if(!apiKey){
+    list.innerHTML = '<div class="empty">No orders yet. Place an order in the store first.</div>';
+    return;
+  }
+
+  try {
+    const res = await fetch('/sources', { headers:{'x-api-key':apiKey} });
+    const data = await res.json();
+    const source = data.sources.find(s => s.name === 'novastore-orders');
+
+    if(!source){
+      list.innerHTML = '<div class="empty">No orders yet. Place an order in the store first.</div>';
+      return;
+    }
+
+    document.getElementById('stat-count').textContent = source.eventCount;
+    document.getElementById('stat-version').textContent = 'v' + source.version;
+
+    const historyRes = await fetch('/history/' + encodeURIComponent('jane@example.com'), { headers:{'x-api-key':apiKey} });
+    const historyData = await historyRes.json();
+    const orders = historyData.events.filter(e => e.action.includes('novastore-orders'));
+
+    let revenue = 0;
+    let html = '';
+    orders.slice().reverse().forEach(o => {
+      const amt = o.payload.amount || 0;
+      revenue += amt;
+      const time = new Date(o.timestamp).toLocaleString();
+      html += `
+        <div class="order">
+          <div class="id">${o.payload.orderId || 'N/A'}</div>
+          <div class="row"><span>${o.payload.customerName || o.payload.email || 'Unknown'}</span><span>$${amt.toFixed(2)}</span></div>
+          <div class="row"><span>${o.payload.items || ''}</span><span>${time}</span></div>
+        </div>`;
+    });
+
+    document.getElementById('stat-revenue').textContent = '$' + revenue.toFixed(2);
+    list.innerHTML = html || '<div class="empty">No orders yet.</div>';
+  } catch(e){
+    list.innerHTML = '<div class="empty">Could not load orders: ' + e.message + '</div>';
+  }
+}
+
+loadOrders();
+</script>
+</body>
+</html>

@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Your Cart — Nova Store</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Inter',sans-serif;background:#F7F8FA;color:#0F172A;}
+header{background:#0A1A3D;color:#fff;padding:16px 20px;display:flex;justify-content:space-between;align-items:center;}
+header .logo{font-weight:700;font-size:18px;}
+header .logo span{color:#4FC3F7;}
+header a{color:#7FA3D9;text-decoration:none;font-size:13px;}
+.wrap{max-width:480px;margin:0 auto;padding:20px;}
+.item{background:#fff;border-radius:10px;padding:12px;display:flex;gap:12px;margin-bottom:10px;box-shadow:0 1px 4px rgba(0,0,0,0.06);}
+.item img{width:60px;height:60px;border-radius:8px;object-fit:cover;}
+.item .info{flex:1;}
+.item h3{font-size:13px;margin-bottom:4px;}
+.item .price{font-size:13px;color:#0A1A3D;font-weight:600;}
+.item .qty{font-size:12px;color:#888;}
+.remove{background:none;border:none;color:#EC4899;font-size:12px;cursor:pointer;}
+.summary{background:#fff;border-radius:10px;padding:16px;margin-top:16px;}
+.row{display:flex;justify-content:space-between;font-size:13px;margin-bottom:8px;}
+.row.total{font-weight:700;font-size:15px;border-top:1px solid #eee;padding-top:8px;margin-top:8px;}
+.checkout-btn{width:100%;padding:14px;background:#4FC3F7;color:#001018;border:none;border-radius:8px;font-weight:600;font-size:14px;cursor:pointer;margin-top:16px;}
+.empty{text-align:center;color:#888;font-size:13px;padding:40px 0;}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">NOVA<span>STORE</span></div>
+  <a href="shop.html">← Continue shopping</a>
+</header>
+
+<div class="wrap" id="cart-content"></div>
+
+<script>
+function loadCart(){
+  return JSON.parse(localStorage.getItem('novaCart') || '[]');
+}
+
+function saveCart(cart){
+  localStorage.setItem('novaCart', JSON.stringify(cart));
+}
+
+function removeItem(index){
+  const cart = loadCart();
+  cart.splice(index, 1);
+  saveCart(cart);
+  render();
+}
+
+function render(){
+  const cart = loadCart();
+  const container = document.getElementById('cart-content');
+
+  if(cart.length === 0){
+    container.innerHTML = '<div class="empty">Your cart is empty.<br><br><a href="shop.html" style="color:#4FC3F7;">Browse products →</a></div>';
+    return;
+  }
+
+  let itemsHtml = '';
+  let subtotal = 0;
+
+  cart.forEach((item, i) => {
+    const lineTotal = item.price * item.qty;
+    subtotal += lineTotal;
+    const imgUrl = 'https://placehold.co/100x100/' + item.color + '/ffffff?text=' + encodeURIComponent(item.name.charAt(0));
+    itemsHtml += `
+      <div class="item">
+        <img src="${imgUrl}" alt="${item.name}">
+        <div class="info">
+          <h3>${item.name}</h3>
+          <div class="qty">Qty: ${item.qty}</div>
+          <div class="price">$${lineTotal.toFixed(2)}</div>
+        </div>
+        <button class="remove" onclick="removeItem(${i})">Remove</button>
+      </div>`;
+  });
+
+  const shipping = subtotal > 0 ? 4.99 : 0;
+  const total = subtotal + shipping;
+
+  container.innerHTML = itemsHtml + `
+    <div class="summary">
+      <div class="row"><span>Subtotal</span><span>$${subtotal.toFixed(2)}</span></div>
+      <div class="row"><span>Shipping</span><span>$${shipping.toFixed(2)}</span></div>
+      <div class="row total"><span>Total</span><span>$${total.toFixed(2)}</span></div>
+      <button class="checkout-btn" onclick="window.location.href='shop-checkout.html'">Proceed to Checkout</button>
+    </div>
+  `;
+}
+
+render();
+</script>
+</body>
+</html>
