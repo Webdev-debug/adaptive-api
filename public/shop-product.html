@@ -61,7 +61,9 @@ const product = products.find(p => p.id === id) || products[0];
 let qty = 1;
 
 function render(){
-  const imgUrl = 'https://picsum.photos/seed/novastore' + product.id + '/500/400';
+  const categoryColors = { Electronics:'3B82F6', Fashion:'EC4899', Home:'6EE7B7', Accessories:'A855F7' };
+  const color = categoryColors[product.category] || '4FC3F7';
+  const imgUrl = 'https://placehold.co/500x400/' + color + '/ffffff?font=roboto&text=' + encodeURIComponent(product.name);
   document.getElementById('content').innerHTML = `
     <img src="${imgUrl}" alt="${product.name}">
     <div class="category">${product.category}</div>

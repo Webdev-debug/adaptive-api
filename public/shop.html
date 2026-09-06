@@ -68,8 +68,10 @@ const products = [
 const categories = ['All', 'Electronics', 'Fashion', 'Home', 'Accessories'];
 let activeCategory = 'All';
 
+const categoryColors = { Electronics:'3B82F6', Fashion:'EC4899', Home:'6EE7B7', Accessories:'A855F7' };
 function imgFor(p){
-  return 'https://picsum.photos/seed/novastore' + p.id + '/300/240';
+  const color = categoryColors[p.category] || '4FC3F7';
+  return 'https://placehold.co/300x240/' + color + '/ffffff?font=roboto&text=' + encodeURIComponent(p.name);
 }
 
 function renderTabs(){
