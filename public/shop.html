@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Demo Shop — powered by Driftless</title>
+<style>
+body{margin:0;font-family:sans-serif;background:#f5f5f7;color:#222;}
+.wrap{max-width:480px;margin:0 auto;padding:20px;}
+.badge{font-size:12px;color:#777;text-align:center;margin-bottom:20px;}
+.product{background:#fff;border-radius:12px;padding:20px;box-shadow:0 2px 10px rgba(0,0,0,0.08);text-align:center;}
+.product img{width:100%;border-radius:8px;background:#eee;height:180px;display:flex;align-items:center;justify-content:center;color:#999;font-size:14px;}
+.product h2{margin:14px 0 4px;}
+.price{font-size:22px;font-weight:bold;color:#111;margin-bottom:16px;}
+button{width:100%;padding:14px;background:#111;color:#fff;border:none;border-radius:8px;font-size:15px;cursor:pointer;}
+button:disabled{opacity:0.6;}
+.explain{margin-top:24px;background:#fff;border-radius:12px;padding:16px;font-size:13px;line-height:1.6;}
+.explain h3{margin:0 0 10px;font-size:14px;}
+.step{padding:8px 0;border-bottom:1px solid #eee;color:#555;}
+.step:last-child{border-bottom:none;}
+.step.active{color:#111;font-weight:bold;}
+.step .num{display:inline-block;width:20px;height:20px;border-radius:50%;background:#eee;text-align:center;line-height:20px;font-size:11px;margin-right:8px;}
+.step.active .num{background:#111;color:#fff;}
+pre{background:#111;color:#0f0;padding:12px;border-radius:8px;font-size:11px;overflow-x:auto;margin-top:16px;white-space:pre-wrap;}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="badge">This is a fake shop. No real payment happens — it's here to show what Driftless does behind the scenes.</div>
+
+  <div class="product">
+    <div style="background:#eee;height:180px;border-radius:8px;display:flex;align-items:center;justify-content:center;color:#999;">👟 Product Image</div>
+    <h2>Wireless Headphones</h2>
+    <div class="price">$49.99</div>
+    <button id="buyBtn" onclick="buyNow()">Buy Now</button>
+  </div>
+
+  <div class="explain">
+    <h3>What actually happens when you click "Buy Now":</h3>
+    <div class="step" id="step1"><span class="num">1</span> Your "store" (this page) processes a fake payment</div>
+    <div class="step" id="step2"><span class="num">2</span> It sends the order details to Driftless as a webhook</div>
+    <div class="step" id="step3"><span class="num">3</span> Driftless checks the data is valid and learns its shape</div>
+    <div class="step" id="step4"><span class="num">4</span> Driftless would forward this to your real backend, safely</div>
+    <pre id="output">Click "Buy Now" to see it happen.</pre>
+  </div>
+</div>
+
+<script>
+let apiKey = null;
+
+async function ensureKey(){
+  if(apiKey) return apiKey;
+  const res = await fetch('/signup', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ name:'shop-demo' }) });
+  const data = await res.json();
+  apiKey = data.apiKey;
+  return apiKey;
+}
+
+function setStep(n){
+  for(let i=1;i<=4;i++){
+    document.getElementById('step'+i).classList.toggle('active', i===n);
+  }
+}
+
+async function buyNow(){
+  const btn = document.getElementById('buyBtn');
+  const output = document.getElementById('output');
+  btn.disabled = true;
+  btn.textContent = 'Processing...';
+
+  setStep(1);
+  await new Promise(r => setTimeout(r, 600));
+  output.textContent = 'Payment processed locally (fake). Preparing to notify Driftless...';
+
+  const key = await ensureKey();
+
+  setStep(2);
+  await new Promise(r => setTimeout(r, 600));
+  const order = {
+    userId: 'shop-customer',
+    orderId: 'ORD-' + Date.now(),
+    product: 'Wireless Headphones',
+    amount: 49.99,
+    currency: 'USD'
+  };
+  output.textContent = 'Sending order to Driftless:\\n' + JSON.stringify(order, null, 2);
+
+  setStep(3);
+  const res = await fetch('/webhook/demo-shop', {
+    method:'POST',
+    headers:{'Content-Type':'application/json','x-api-key':key},
+    body: JSON.stringify(order)
+  });
+  const result = await res.json();
+  await new Promise(r => setTimeout(r, 400));
+  output.textContent = 'Driftless validated and learned the order shape:\\n' + JSON.stringify(result, null, 2);
+
+  setStep(4);
+  await new Promise(r => setTimeout(r, 600));
+  output.textContent += '\\n\\n✅ Done. In a real store, Driftless would now forward this clean, verified order to your actual backend — automatically, safely, every time.';
+
+  btn.disabled = false;
+  btn.textContent = 'Buy Again';
+}
+</script>
+</body>
+</html>
