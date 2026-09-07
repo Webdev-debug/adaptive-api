@@ -5,7 +5,7 @@ const trackUser = require('./middleware/trackUser');
 const requireApiKey = require('./middleware/requireApiKey');
 const { getEventsForUser, getEventById } = require('./services/eventService');
 const { getSchema, getAllSchemas, getSchemaHistory, getBreakingChanges, getAnomalies, toJsonSchema } = require('./services/schemaService');
-const { generateApiKey } = require('./services/authService');
+const { generateApiKey, revokeKey, getKeyInfo } = require('./services/authService');
 const { setForwardUrl, getAllForwardUrls, forwardEvent } = require('./services/forwardService');
 const { checkAndRecord } = require('./services/dedupService');
 const { redactPII } = require('./utils/piiDetector');
@@ -117,6 +117,16 @@ app.post('/configure-alerts', requireApiKey, (req, res) => {
 app.get('/anomalies/:resource', requireApiKey, (req, res) => {
   const anomalies = getAnomalies(req.apiKey, req.params.resource);
   res.json({ resource: req.params.resource, anomalies });
+});
+
+app.get('/key-info', requireApiKey, (req, res) => {
+  const info = getKeyInfo(req.apiKey);
+  res.json(info);
+});
+
+app.post('/revoke-key', requireApiKey, (req, res) => {
+  revokeKey(req.apiKey);
+  res.json({ message: 'Key revoked. It can no longer be used.' });
 });
 
 app.get('/sources', requireApiKey, (req, res) => {
