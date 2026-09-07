@@ -19,8 +19,15 @@ h2{font-size:16px;margin:20px 0 10px;}
 .stat .num{font-size:22px;font-weight:700;color:#4FC3F7;}
 .stat .label{font-size:11px;color:#7FA3D9;margin-top:4px;}
 .order{background:#0C1B38;border:1px solid #1F3A66;border-radius:10px;padding:14px;margin-bottom:10px;font-family:'JetBrains Mono',monospace;font-size:12px;}
+.order.flagged{border-color:#FF6B6B;}
 .order .id{color:#4FC3F7;font-weight:600;}
 .order .row{display:flex;justify-content:space-between;color:#7FA3D9;margin-top:4px;}
+.flags{margin-top:8px;display:flex;gap:6px;flex-wrap:wrap;}
+.flag{font-size:10px;padding:2px 7px;border-radius:4px;}
+.flag.pii{background:rgba(255,209,102,0.15);color:#FFD166;}
+.flag.dup{background:rgba(255,107,107,0.15);color:#FF6B6B;}
+.flag.anomaly{background:rgba(236,72,153,0.15);color:#EC4899;}
+.flag.safe{background:rgba(110,231,183,0.15);color:#6EE7B7;}
 .empty{text-align:center;color:#7FA3D9;font-size:13px;padding:40px 0;}
 .refresh{background:transparent;border:1px solid #1F3A66;color:#EAF2FF;padding:8px 14px;border-radius:6px;font-size:12px;cursor:pointer;margin-bottom:16px;}
 .refresh:hover{border-color:#4FC3F7;color:#4FC3F7;}
@@ -38,7 +45,7 @@ h2{font-size:16px;margin:20px 0 10px;}
   <div class="stat-row">
     <div class="stat"><div class="num" id="stat-count">0</div><div class="label">Orders received</div></div>
     <div class="stat"><div class="num" id="stat-revenue">$0</div><div class="label">Total revenue</div></div>
-    <div class="stat"><div class="num" id="stat-version">v0</div><div class="label">Schema version</div></div>
+    <div class="stat"><div class="num" id="stat-flagged">0</div><div class="label">Flagged by Driftless</div></div>
   </div>
 
   <h2>Recent orders</h2>
@@ -56,37 +63,38 @@ async function loadOrders(){
   }
 
   try {
-    const res = await fetch('/sources', { headers:{'x-api-key':apiKey} });
-    const data = await res.json();
-    const source = data.sources.find(s => s.name === 'novastore-orders');
-
-    if(!source){
-      list.innerHTML = '<div class="empty">No orders yet. Place an order in the store first.</div>';
-      return;
-    }
-
-    document.getElementById('stat-count').textContent = source.eventCount;
-    document.getElementById('stat-version').textContent = 'v' + source.version;
-
     const historyRes = await fetch('/history/' + encodeURIComponent('jane@example.com'), { headers:{'x-api-key':apiKey} });
     const historyData = await historyRes.json();
     const orders = historyData.events.filter(e => e.action.includes('novastore-orders'));
 
+    document.getElementById('stat-count').textContent = orders.length;
+
     let revenue = 0;
+    let flaggedCount = 0;
     let html = '';
+
     orders.slice().reverse().forEach(o => {
       const amt = o.payload.amount || 0;
       revenue += amt;
       const time = new Date(o.timestamp).toLocaleString();
+
+      const hasEmail = o.payload.email ? true : false;
+      const hasPhone = o.payload.phone ? true : false;
+      const flags = [];
+      if(hasEmail || hasPhone) flags.push('<span class="flag pii">PII redacted before forwarding</span>');
+      if(flags.length === 0) flags.push('<span class="flag safe">Clean</span>');
+
       html += `
-        <div class="order">
+        <div class="order${flags.some(f=>f.includes('pii')||f.includes('dup')||f.includes('anomaly'))?' flagged':''}">
           <div class="id">${o.payload.orderId || 'N/A'}</div>
           <div class="row"><span>${o.payload.customerName || o.payload.email || 'Unknown'}</span><span>$${amt.toFixed(2)}</span></div>
           <div class="row"><span>${o.payload.items || ''}</span><span>${time}</span></div>
+          <div class="flags">${flags.join('')}</div>
         </div>`;
     });
 
     document.getElementById('stat-revenue').textContent = '$' + revenue.toFixed(2);
+    document.getElementById('stat-flagged').textContent = flaggedCount;
     list.innerHTML = html || '<div class="empty">No orders yet.</div>';
   } catch(e){
     list.innerHTML = '<div class="empty">Could not load orders: ' + e.message + '</div>';
