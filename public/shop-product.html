@@ -40,18 +40,18 @@ button.main{flex:1;padding:14px;border:none;border-radius:8px;font-size:14px;fon
 
 <script>
 const products = [
-  { id:1, name:'Wireless Headphones', price:49.99, category:'Electronics', rating:4.5, desc:'Crisp sound, 30-hour battery life, and a snug fit built for all-day listening.' },
-  { id:2, name:'Smart Watch', price:89.99, category:'Electronics', rating:4.2, desc:'Track your steps, heart rate, and sleep — synced straight to your phone.' },
-  { id:3, name:'Bluetooth Speaker', price:38.50, category:'Electronics', rating:4.6, desc:'Compact, waterproof, and loud enough to fill a room.' },
-  { id:4, name:'Phone Stand', price:12.99, category:'Electronics', rating:4.0, desc:'Adjustable angle stand, works with any phone size.' },
-  { id:5, name:'Running Shoes', price:64.50, category:'Fashion', rating:4.7, desc:'Lightweight cushioning designed for daily runs and long-distance comfort.' },
-  { id:6, name:'Sunglasses', price:22.99, category:'Fashion', rating:4.3, desc:'UV-protected lenses with a classic frame that goes with everything.' },
-  { id:7, name:'Leather Wallet', price:29.00, category:'Fashion', rating:4.4, desc:'Slim genuine leather wallet with 6 card slots.' },
-  { id:8, name:'Denim Jacket', price:54.00, category:'Fashion', rating:4.1, desc:'Classic fit denim jacket, wears well in any season.' },
-  { id:9, name:'Coffee Maker', price:75.00, category:'Home', rating:4.5, desc:'Brews a full pot in under 6 minutes, with a built-in warmer plate.' },
-  { id:10, name:'Desk Lamp', price:19.99, category:'Home', rating:4.2, desc:'Adjustable brightness, USB-powered, folds flat for travel.' },
-  { id:11, name:'Throw Pillow Set', price:24.00, category:'Home', rating:4.6, desc:'Set of 2 soft cushions, machine washable covers.' },
-  { id:12, name:'Backpack', price:34.00, category:'Accessories', rating:4.8, desc:'Water-resistant, padded laptop sleeve, and room for everything else.' }
+  { id:1, name:'Wireless Headphones', price:49.99, category:'Electronics', rating:4.5, keyword:'headphones', desc:'Crisp sound, 30-hour battery life, and a snug fit built for all-day listening.' },
+  { id:2, name:'Smart Watch', price:89.99, category:'Electronics', rating:4.2, keyword:'smartwatch', desc:'Track your steps, heart rate, and sleep — synced straight to your phone.' },
+  { id:3, name:'Bluetooth Speaker', price:38.50, category:'Electronics', rating:4.6, keyword:'speaker', desc:'Compact, waterproof, and loud enough to fill a room.' },
+  { id:4, name:'Phone Stand', price:12.99, category:'Electronics', rating:4.0, keyword:'phonestand', desc:'Adjustable angle stand, works with any phone size.' },
+  { id:5, name:'Running Shoes', price:64.50, category:'Fashion', rating:4.7, keyword:'runningshoes', desc:'Lightweight cushioning designed for daily runs and long-distance comfort.' },
+  { id:6, name:'Sunglasses', price:22.99, category:'Fashion', rating:4.3, keyword:'sunglasses', desc:'UV-protected lenses with a classic frame that goes with everything.' },
+  { id:7, name:'Leather Wallet', price:29.00, category:'Fashion', rating:4.4, keyword:'wallet', desc:'Slim genuine leather wallet with 6 card slots.' },
+  { id:8, name:'Denim Jacket', price:54.00, category:'Fashion', rating:4.1, keyword:'denimjacket', desc:'Classic fit denim jacket, wears well in any season.' },
+  { id:9, name:'Coffee Maker', price:75.00, category:'Home', rating:4.5, keyword:'coffeemaker', desc:'Brews a full pot in under 6 minutes, with a built-in warmer plate.' },
+  { id:10, name:'Desk Lamp', price:19.99, category:'Home', rating:4.2, keyword:'desklamp', desc:'Adjustable brightness, USB-powered, folds flat for travel.' },
+  { id:11, name:'Throw Pillow Set', price:24.00, category:'Home', rating:4.6, keyword:'pillow', desc:'Set of 2 soft cushions, machine washable covers.' },
+  { id:12, name:'Backpack', price:34.00, category:'Accessories', rating:4.8, keyword:'backpack', desc:'Water-resistant, padded laptop sleeve, and room for everything else.' }
 ];
 
 const params = new URLSearchParams(window.location.search);
@@ -61,9 +61,7 @@ const product = products.find(p => p.id === id) || products[0];
 let qty = 1;
 
 function render(){
-  const categoryColors = { Electronics:'3B82F6', Fashion:'EC4899', Home:'6EE7B7', Accessories:'A855F7' };
-  const color = categoryColors[product.category] || '4FC3F7';
-  const imgUrl = 'https://placehold.co/500x400/' + color + '/ffffff?font=roboto&text=' + encodeURIComponent(product.name);
+  const imgUrl = 'https://loremflickr.com/500/400/' + product.keyword;
   document.getElementById('content').innerHTML = `
     <img src="${imgUrl}" alt="${product.name}">
     <div class="category">${product.category}</div>

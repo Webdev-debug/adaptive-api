@@ -51,27 +51,25 @@ footer{text-align:center;padding:20px;font-size:12px;color:#888;}
 
 <script>
 const products = [
-  { id:1, name:'Wireless Headphones', price:49.99, category:'Electronics', rating:4.5 },
-  { id:2, name:'Smart Watch', price:89.99, category:'Electronics', rating:4.2 },
-  { id:3, name:'Bluetooth Speaker', price:38.50, category:'Electronics', rating:4.6 },
-  { id:4, name:'Phone Stand', price:12.99, category:'Electronics', rating:4.0 },
-  { id:5, name:'Running Shoes', price:64.50, category:'Fashion', rating:4.7 },
-  { id:6, name:'Sunglasses', price:22.99, category:'Fashion', rating:4.3 },
-  { id:7, name:'Leather Wallet', price:29.00, category:'Fashion', rating:4.4 },
-  { id:8, name:'Denim Jacket', price:54.00, category:'Fashion', rating:4.1 },
-  { id:9, name:'Coffee Maker', price:75.00, category:'Home', rating:4.5 },
-  { id:10, name:'Desk Lamp', price:19.99, category:'Home', rating:4.2 },
-  { id:11, name:'Throw Pillow Set', price:24.00, category:'Home', rating:4.6 },
-  { id:12, name:'Backpack', price:34.00, category:'Accessories', rating:4.8 }
+  { id:1, name:'Wireless Headphones', price:49.99, category:'Electronics', rating:4.5, keyword:'headphones' },
+  { id:2, name:'Smart Watch', price:89.99, category:'Electronics', rating:4.2, keyword:'smartwatch' },
+  { id:3, name:'Bluetooth Speaker', price:38.50, category:'Electronics', rating:4.6, keyword:'speaker' },
+  { id:4, name:'Phone Stand', price:12.99, category:'Electronics', rating:4.0, keyword:'phonestand' },
+  { id:5, name:'Running Shoes', price:64.50, category:'Fashion', rating:4.7, keyword:'runningshoes' },
+  { id:6, name:'Sunglasses', price:22.99, category:'Fashion', rating:4.3, keyword:'sunglasses' },
+  { id:7, name:'Leather Wallet', price:29.00, category:'Fashion', rating:4.4, keyword:'wallet' },
+  { id:8, name:'Denim Jacket', price:54.00, category:'Fashion', rating:4.1, keyword:'denimjacket' },
+  { id:9, name:'Coffee Maker', price:75.00, category:'Home', rating:4.5, keyword:'coffeemaker' },
+  { id:10, name:'Desk Lamp', price:19.99, category:'Home', rating:4.2, keyword:'desklamp' },
+  { id:11, name:'Throw Pillow Set', price:24.00, category:'Home', rating:4.6, keyword:'pillow' },
+  { id:12, name:'Backpack', price:34.00, category:'Accessories', rating:4.8, keyword:'backpack' }
 ];
 
 const categories = ['All', 'Electronics', 'Fashion', 'Home', 'Accessories'];
 let activeCategory = 'All';
 
-const categoryColors = { Electronics:'3B82F6', Fashion:'EC4899', Home:'6EE7B7', Accessories:'A855F7' };
 function imgFor(p){
-  const color = categoryColors[p.category] || '4FC3F7';
-  return 'https://placehold.co/300x240/' + color + '/ffffff?font=roboto&text=' + encodeURIComponent(p.name);
+  return 'https://loremflickr.com/300/240/' + p.keyword;
 }
 
 function renderTabs(){
