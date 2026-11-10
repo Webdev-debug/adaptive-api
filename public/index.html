@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <link rel="icon" type="image/svg+xml" href="/favicon.svg">
-<title>Driftless — self-adapting webhook infrastructure</title>
+<title>Driftless — never lose an order to a broken connection</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;900&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
 
@@ -164,17 +164,17 @@ footer a{color:var(--accent);}
 </nav>
 
 <div class="hero">
-  <div class="stamp">SELF-ADAPTING · CONFIDENCE-SCORED · EDGE-READY</div>
-  <h1>Infrastructure that<br>learns your data<br><em>before</em> it breaks.</h1>
-  <p class="sub">Driftless doesn't just accept your data — it scores its own confidence in every field, promoting patterns to required once they prove consistent, and versioning every change it makes along the way.</p>
+  <div class="stamp">FOR ONLINE STORES · NO SETUP · FREE TO TRY</div>
+  <h1>Stop losing orders<br>to <em>broken</em><br>connections.</h1>
+  <p class="sub">When your payment provider, delivery partner or shop platform sends you an update, Driftless checks it, hides private customer details, catches duplicates, and passes it safely to your system. If anything looks wrong, you know straight away.</p>
   <a class="cta" href="#demo">RUN THE LIVE DEMO ↓</a>
 </div>
 </div>
 
 <div class="stackstrip">
   <div class="track">
-    <span>Node.js Runtime</span><span>Express Core</span><span>Render Edge</span><span>GitHub CI</span><span>Schema Mesh</span><span>Confidence Engine</span><span>Webhook Relay</span><span>Multi-Tenant Auth</span>
-    <span>Node.js Runtime</span><span>Express Core</span><span>Render Edge</span><span>GitHub CI</span><span>Schema Mesh</span><span>Confidence Engine</span><span>Webhook Relay</span><span>Multi-Tenant Auth</span>
+    <span>Duplicate protection</span><span>Privacy shield</span><span>Automatic retries</span><span>Instant alerts</span><span>Order history</span><span>Smart checks</span><span>Works with any service</span><span>Private accounts</span>
+    <span>Duplicate protection</span><span>Privacy shield</span><span>Automatic retries</span><span>Instant alerts</span><span>Order history</span><span>Smart checks</span><span>Works with any service</span><span>Private accounts</span>
   </div>
 </div>
 
@@ -184,19 +184,19 @@ footer a{color:var(--accent);}
   <div class="icon">▣</div>
   <div class="text">
     <strong>Built entirely on a phone.</strong>
-    <span>No laptop, no IDE — every line written, tested, and deployed from a Termux terminal on Android. The infrastructure above is real, and so is that fact.</span>
+    <span>No laptop. Every line was written, tested and launched from an Android phone.</span>
   </div>
 </div>
 
 <div class="spec-grid">
-  <div class="spec-card"><span class="tag">01 — ADAPT</span><p>The first payload from a new source resolves its schema on contact. Every payload after that validates against it and evolves it in place.</p></div>
-  <div class="spec-card"><span class="tag">02 — SCORE</span><p>Every field earns a live confidence score based on how consistently it appears. Cross the threshold, and it's auto-promoted to required.</p></div>
-  <div class="spec-card"><span class="tag">03 — RELAY</span><p>Point any source at your own backend. Validated events are forwarded automatically, in real time, with delivery status returned inline.</p></div>
+  <div class="spec-card"><span class="tag">01 — CATCHES PROBLEMS</span><p>Spots duplicate payments, strange amounts and broken information before they reach your store.</p></div>
+  <div class="spec-card"><span class="tag">02 — PROTECTS PRIVACY</span><p>Hides customers' emails, phone numbers and card details before anything is passed on.</p></div>
+  <div class="spec-card"><span class="tag">03 — NEVER LOSES AN ORDER</span><p>If your system is down for a moment, Driftless keeps trying until the message gets through.</p></div>
 </div>
 
 <div class="demo" id="demo">
   <h2>Try it live</h2>
-  <p class="lead">Get a free API key, send the same event a few times, and watch confidence climb toward required.</p>
+  <p class="lead">Get a free key, send a test order, and see what Driftless does with it.</p>
 
   <div class="keybox" id="keybox">
     <p>You need a key to try the demo below. It's free and takes one tap.</p>
@@ -228,22 +228,22 @@ footer a{color:var(--accent);}
       <div class="output" id="output">Response will show here.</div>
 
       <div class="timeline">
-        <h3>Schema evolution</h3>
+        <h3>What Driftless has learned</h3>
         <div id="timeline-list"><span class="timeline-empty">No history yet.</span></div>
       </div>
     </div>
     <div class="actions">
-      <button class="action" id="btn-send" onclick="sendEvent()" disabled>→ Send event to current source</button>
-      <button class="action" id="btn-newfield" onclick="sendEventNewField()" disabled>→ Send event with unseen field</button>
-      <button class="action" id="btn-history" onclick="getHistory()" disabled>→ Get alice's history</button>
-      <button class="action" id="btn-duplicate" onclick="sendDuplicate()" disabled>→ Send same event twice (test dedup)</button>
-      <button class="action" id="btn-pii" onclick="sendPII()" disabled>→ Send event with email/phone (test redaction)</button>
+      <button class="action" id="btn-send" onclick="sendEvent()" disabled>→ Send a test order</button>
+      <button class="action" id="btn-newfield" onclick="sendEventNewField()" disabled>→ Send an order with an extra detail</button>
+      <button class="action" id="btn-history" onclick="getHistory()" disabled>→ See past orders</button>
+      <button class="action" id="btn-duplicate" onclick="sendDuplicate()" disabled>→ Send the same order twice (duplicate check)</button>
+      <button class="action" id="btn-pii" onclick="sendPII()" disabled>→ Send an order with contact details (privacy check)</button>
     </div>
   </div>
 </div>
 
 <div class="demo" id="endpoints">
-  <h2>Endpoints</h2>
+  <h2>For developers</h2>
   <table>
     <tr><th>Method</th><th>Path</th><th>Purpose</th></tr>
     <tr><td class="method">POST</td><td>/signup</td><td>Get a free API key.</td></tr>
